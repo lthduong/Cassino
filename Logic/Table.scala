@@ -3,7 +3,11 @@ import scala.collection.mutable.Buffer
 
 
 class Table {
-  val cardsOnTable = Buffer[Card]()
+  private val cardsOnTable = Buffer[Card]()
+
+  def allCard = cardsOnTable
+
+  def hasCard(card: Card)= cardsOnTable.contains(card)
 
   def addCard(card: Card) = cardsOnTable += card
 

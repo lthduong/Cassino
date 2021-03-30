@@ -22,6 +22,7 @@ class Player(name: String, game: Game) {
   def updateSweep()              = { sweep += 1 }
   def updateScore(newScore: Int) = { score = newScore }
 
+  def capture(cardUse: Card) = ???
 
   def drop(cardDrop: Card): Unit = {
     if(hand.contains(cardDrop)) {
@@ -35,6 +36,6 @@ class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
-  def optimizeMove: Unit = ???
+  def optimalMove: Unit = ???
 
 }
