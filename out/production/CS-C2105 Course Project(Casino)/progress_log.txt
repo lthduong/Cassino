@@ -1,0 +1,8 @@
+Update 17.03.2021:
+
+Added the classes Card, Game, Player, and Table. Some of the more complex methods in class Game and Player are still missing.
+The algorithm for the validTrade method has been revised in the technical plan.
+Up to this point, no methods has been tested.
+The workload in the last two weeks was roughly 3 hours.
+So far, the speed of the project is as presented in the plan.
+
