@@ -7,7 +7,7 @@ class Game {
 
   val table = new Table
   private var players = Buffer[Player]()
-
+  private var turn = players.head
 
   private val deck: Buffer[Card] = {
     var cardList = Buffer[Card]()
@@ -19,14 +19,18 @@ class Game {
     cardList
   }    // TODO: Test this
 
+  def playerTurn = this.turn
+
+  def advanceTurn() = {
+    turn = players((players.indexOf(turn) + 1) % players.length)
+  }
+
   def addPlayers(playersLít: Buffer[Player]): Unit = { players = players ++ playersLít }
 
   def shuffle = Random.shuffle(deck)
 
-  def capturing(card: Card) = {
-    val posibleCard = table.allCard.filter( c => !(c.value >= card.handValue) )
-    val tableValue = table.allCard.zip(table.allCard.map( _.value ))
-
+  def validCapture(cardUse: Card, cardTake: Vector[Vector[Card]]): Boolean = {
+    cardTake.forall( cardVector => cardVector.map( _.value ).sum == cardUse.handValue )
   }
 
   //Deal cards to the target player until he has 4 cards
@@ -52,6 +56,13 @@ class Game {
     ng
   }
 
-  def calculateScore(player: Player): Unit = ???  //TODO: Implement this
+  def score(player: Player): Int = {
+    var score = player.rawScore
+    val maxHandInTable = players.map( _.hand.length ).max      // The highest number of card in the hand of a player in the whole table
+    val maxSpadeInTable = players.map( _.numberOfSpades ).max  // The highest number of spades in the hand of a player in the whole table
+    if(player.hand.length == maxHandInTable) score += 1
+    if(player.numberOfSpades == maxSpadeInTable) score += 2
+    score
+  }
 
 }
