@@ -14,7 +14,7 @@ class Game {
     val suit = Vector("s", "d", "c", "h")
     val name = (0 to 9).map( _.toString ).toVector ++ Vector("j", "q", "k")
     for(n <- 0 to 51) {
-      cardList = cardList :+ new Card(name(n % name.length), suit(n % suit.length), (n % 13) + 1)
+      cardList = cardList :+ new Card(name(n % name.length), suit(n % suit.length))
     }
     cardList
   }    // TODO: Test this
@@ -23,14 +23,19 @@ class Game {
   // Some methods to help getting values of the vars
   def playersList = players
   def playerTurn = this.turn
-  def deckRemain = deck.length  // The number of cards in the deck at the moment
 
   // Use to advancing turn
-  def advanceTurn() = {
-    turn = players((players.indexOf(turn) + 1) % players.length)
+  def advanceTurn() = { turn = players((players.indexOf(turn) + 1) % players.length) }
+
+  //Use to set turn to a specific player
+  def setTurn(playerName: String) = {
+    if(players.map( _.name ).contains(playerName)) turn = players.find( _.name == playerName ).get
   }
 
-  def addPlayers(playersLít: Buffer[Player]): Unit = { players = players ++ playersLít }
+  //Use to remove a specific card from the deck
+  def removeFromDeck(card: Card) = if(deck.contains(card)) deck -= card
+
+  def addPlayers(player: Player): Unit = { players = players :+ player }
 
   def shuffle = Random.shuffle(deck)
 
@@ -57,7 +62,7 @@ class Game {
 
   def playAgain: Game = {
     val ng = new Game
-    ng.addPlayers(players)
+    players.foreach(ng.addPlayers)
     ng
   }
 

@@ -20,7 +20,7 @@ case class Player(name: String, game: Game) {
   def pile   = pileCards
 
 
-  // These three used to update the var
+  // These are used to update the var
   def updateHidden()             = { hidden = !hidden }
   def updateSweep()              = { sweep += 1       }
   def updateScore(newScore: Int) = { score = newScore }
