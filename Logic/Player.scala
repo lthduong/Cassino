@@ -62,6 +62,12 @@ case class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
+  def findAllCombination(cardUse: Card) = {
+    val cardsWithTheSameValue = this.game.table.allCard.filter( _.value == cardUse.handValue )
+    val possibleCardsOnTable = this.game.table.allCard.filter( _.value < cardUse.handValue  )  // Getting the cards that has the value smaller than the hand value of the used card
+    
+  }
+
   def optimalMove(): Unit = ???
 
 }

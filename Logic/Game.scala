@@ -17,7 +17,7 @@ class Game {
       cardList = cardList :+ new Card(name(n % name.length), suit(n % suit.length))
     }
     cardList
-  }    // TODO: Test this
+  }
 
 
   // Some methods to help getting values of the vars
@@ -40,7 +40,14 @@ class Game {
   def shuffle = Random.shuffle(deck)
 
   def validCapture(cardUse: Card, cardTake: Vector[Vector[Card]]): Boolean = {
-    cardTake.forall( cardVector => cardVector.map( _.value ).sum == cardUse.handValue )
+    val checkSum = cardTake.forall( cardVector => cardVector.map( _.value ).sum == cardUse.handValue )
+    var checkOverlap = true
+    for(vector <- cardTake) {
+      val theRest = cardTake.filter( _ != vector ).flatten  // The flattened cardTake with the vector in check removed
+      val overlap = vector.intersect(theRest).isEmpty       // Find out if the Rest and vector is overlap
+      checkOverlap = checkOverlap && overlap                // Update the check overlap
+    }
+    checkSum && checkOverlap
   }
 
   //Deal cards to the targeted player until he has 4 cards
