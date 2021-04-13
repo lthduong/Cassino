@@ -62,10 +62,18 @@ case class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
-  def findAllCombination(cardUse: Card) = {
-    val cardsWithTheSameValue = this.game.table.allCard.filter( _.value == cardUse.handValue )
-    val possibleCardsOnTable = this.game.table.allCard.filter( _.value < cardUse.handValue  )  // Getting the cards that has the value smaller than the hand value of the used card
-    
+
+  // TODO: Finish this. The problem is that I don't know how to improve this since it is using a card as an argument
+  def findAllCombination(cardUse: Card): Vector[Vector[Card]] = {
+    val cardsWithEqualValue = this.game.table.allCard.filter( _.value == cardUse.handValue ).toVector
+    val cardsWithLessValue = this.game.table.allCard.filter( _.value < cardUse.handValue )  // Getting the cards that has the value smaller than the hand value of the used card
+    if(cardsWithLessValue.isEmpty) Vector(cardsWithEqualValue)
+    else {
+      val possibleValue = cardsWithLessValue.map( _.value )
+      var cardVector = Vector[Vector[Card]]()
+
+      cardVector
+    }
   }
 
   def optimalMove(): Unit = ???

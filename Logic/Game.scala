@@ -2,10 +2,12 @@ package Logic
 
 import scala.collection.mutable.Buffer
 import scala.util.Random
+import Logic.IOHandler
 
 class Game {
 
   val table = new Table
+  val handler = new IOHandler
 
   private var players = Buffer[Player]()
   private var turn = players.head

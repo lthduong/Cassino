@@ -1,11 +1,10 @@
 package Logic
 
 import scala.collection.mutable.Buffer
-import scala.math._
 import java.io.{BufferedReader, BufferedWriter, FileNotFoundException, FileReader, FileWriter, IOException}
 
 
-object IOHandler {
+class IOHandler {
 
   def saveGame(filePath: String, game: Game) = {
 

@@ -1,5 +1,7 @@
 package Logic
 
+import java.awt.image
+
 case class Card(name: String, suit: String) {
 
   val value: Int = {
