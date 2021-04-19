@@ -21,15 +21,15 @@ class IOHandler {
     for(player <- players) {
       fileContent += "*Cmp: " + player.isInstanceOf[ComputerPlayer].toString
       fileContent += "Name: " + player.name
-      fileContent += "Hand:" + player.hand.map( _.getName ).mkString("")
-      fileContent += "Pile:" + player.pile.map( _.getName ).mkString("")
+      fileContent += "Hand:" + player.hand.map( _.toString ).mkString("")
+      fileContent += "Pile:" + player.pile.map( _.toString ).mkString("")
       fileContent += "Score:" + player.getScore
     }
 
     // Adding turn info
     fileContent += "#Turn"
     fileContent += "Turn player: " + game.playerTurn.name
-    fileContent += "Table: " + game.table.allCard.map( _.getName ).mkString("")
+    fileContent += "Table: " + game.table.allCard.map( _.toString ).mkString("")
 
     fileContent += "#END"
 
