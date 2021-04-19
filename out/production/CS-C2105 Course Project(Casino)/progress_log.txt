@@ -14,3 +14,14 @@ Added method playAgain, and the deck implementation, along with some trivial cha
 The deck creating method has been tested with the REPL, and the result seems optimistic.
 The workload is roughly 1 and a half hours.
 THe spped of the project is a little slower compare to the plan.
+
+
+
+Update 14.04.2021:
+
+Added the IO handling methods, fixing some small logic bugs, and begin to create the GUI.
+No methods have been tested.
+The workload is roughly about 3 - 4 hours.
+The speed of the project is slower compare to the plan.
+I have some problem with the optimalMove method of the computer player and I might need a private meeting to discuss.
+If possible, I would like to have a meeting in Monday or Tuesday morning.
