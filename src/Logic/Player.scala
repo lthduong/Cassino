@@ -1,0 +1,94 @@
+package src.Logic
+
+import scala.collection.mutable.Buffer
+
+
+case class Player(name: String, game: Game) {
+
+  protected var score     = 0    // Might not be needed
+  protected var sweep     = 0
+  protected var hidden    = false
+  protected var handCards = Buffer[Card]()
+  protected var pileCards = Buffer[Card]()
+
+
+  // These three used to get the var
+  def getScore  = score       // Might not be needed
+  def getSweep  = sweep
+  def getHidden = hidden
+  def hand   = handCards
+  def pile   = pileCards
+
+
+  // These are used to update the var
+  def updateHidden()             = { hidden = !hidden }
+  def updateSweep()              = { sweep += 1       }
+  def updateScore(newScore: Int) = { score = newScore }
+  def addCardHand(card: Card)    = { handCards += card}
+  def addCardPile(card: Card)    = { pileCards += card}
+
+
+
+  def capture(cardUse: Card, cardTake: Vector[Vector[Card]]) = {
+    if(handCards.contains(cardUse) && game.validCapture(cardUse, cardTake)) {
+      cardTake.foreach( cardVector => handCards ++= cardVector )
+      handCards += cardUse
+      if(game.table.allCard.isEmpty) sweep += 1
+      game.deal(this)
+      game.advanceTurn()
+    }
+  }
+
+  def drop(cardDrop: Card): Unit = {
+    if(handCards.contains(cardDrop)) {
+      game.table.addCard(cardDrop)
+      handCards -= cardDrop
+      game.deal(this)
+      game.advanceTurn()
+    }
+  }
+
+  // Aulixiary methods to calculate score
+  def numberOfAce    = handCards.count( _.name == "1" )
+  def numberOfSpades = handCards.count( _.suit == "s" )
+  def hasDiamondTen  = handCards.count( card => card.name == "0" && card.suit == "d" )
+  def hasSpadeTwo    = handCards.count( card => card.name == "2" && card.suit == "s" )
+
+  // The score regardless of the number of Spades and Card
+  def rawScore       = this.sweep + numberOfAce + hasDiamondTen * 2 + hasSpadeTwo
+
+}
+
+
+class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
+
+  var count = 0
+
+  def findCombination(sum: Int, currentSum: Int, arr: Array[Int], index: Int): Unit= {
+    if(currentSum == sum) {
+      count += 1
+      return
+    }
+    if(currentSum < sum && index < (arr.length - 1)) {
+      findCombination(sum, currentSum + arr(index), arr, index + 1)
+      findCombination(sum, currentSum, arr, index + 1)
+    }
+  }
+
+
+  // TODO: Finish this. The problem is that I don't know how to improve this since it is using a card as an argument
+  def findAllCombination(cardUse: Card): Vector[Vector[Card]] = {
+    val cardsWithEqualValue = this.game.table.allCard.filter( _.value == cardUse.handValue ).toVector
+    val cardsWithLessValue = this.game.table.allCard.filter( _.value < cardUse.handValue )  // Getting the cards that has the value smaller than the hand value of the used card
+    if(cardsWithLessValue.isEmpty) Vector(cardsWithEqualValue)
+    else {
+      val possibleValue = cardsWithLessValue.map( _.value )
+      var cardVector = Vector[Vector[Card]]()
+
+      cardVector
+    }
+  }
+
+  def optimalMove(): Unit = ???
+
+}
