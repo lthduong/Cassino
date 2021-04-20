@@ -10,7 +10,8 @@ class Game {
   val handler = new IOHandler
 
   private var players = Buffer[Player]()
-  private var turn = players.head
+  private var turn    = players.head       // TODO: Fix this, in case players is empty, this will be index out of bound
+
   private val deck: Buffer[Card] = {
     var cardList = Buffer[Card]()
     val suit = Vector("s", "d", "c", "h")

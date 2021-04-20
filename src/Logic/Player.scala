@@ -91,7 +91,7 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
   def findCards(cardUsed: Card) = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
     val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue )
-    possibleCombos
+    possibleCombos.toSet.subsets.map( subset => subset.toVector.map( _.toVector ) ).filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos) )
   }
 
   def optimalMove(): Unit = ???
