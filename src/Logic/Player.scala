@@ -62,31 +62,36 @@ case class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
-  var count = 0
-
-  def findCombination(sum: Int, currentSum: Int, arr: Array[Int], index: Int): Unit= {
-    if(currentSum == sum) {
-      count += 1
-      return
+  // Aulixiary method to find subsets with duplicate elements, since set does not contains duplicate
+  private def findDuplicatedSubsets(sum: Int): Buffer[Buffer[Int]] = {
+    val res = Buffer[Buffer[Int]]()
+    for(i <- 2 to 4) {
+      if (sum % i == 0) {
+        res += Array.fill(i)(sum / i).toBuffer
+      }
     }
-    if(currentSum < sum && index < (arr.length - 1)) {
-      findCombination(sum, currentSum + arr(index), arr, index + 1)
-      findCombination(sum, currentSum, arr, index + 1)
-    }
+    res
   }
 
-
-  // TODO: Finish this. The problem is that I don't know how to improve this since it is using a card as an argument
-  def findAllCombination(cardUse: Card): Vector[Vector[Card]] = {
-    val cardsWithEqualValue = this.game.table.allCard.filter( _.value == cardUse.handValue ).toVector
-    val cardsWithLessValue = this.game.table.allCard.filter( _.value < cardUse.handValue )  // Getting the cards that has the value smaller than the hand value of the used card
-    if(cardsWithLessValue.isEmpty) Vector(cardsWithEqualValue)
-    else {
-      val possibleValue = cardsWithLessValue.map( _.value )
-      var cardVector = Vector[Vector[Card]]()
-
-      cardVector
+  // Likely unnecessary
+  private def findCombinations(sum: Int, takeFrom: Buffer[Int]): Buffer[Buffer[Int]] = {
+    val res = Buffer[Buffer[Int]]()
+    val possibleNumbers = takeFrom.filter( _ <= sum ).toSet
+    possibleNumbers.subsets().filter( _.sum == sum ).foreach( res += _.toBuffer )
+    for(n <- possibleNumbers) {
+      val duplicateSubSets = findDuplicatedSubsets(sum - n)
+      if(duplicateSubSets.nonEmpty) {
+        res ++= (duplicateSubSets.map( _ :+ n ))
+      }
     }
+    res.filter( subset => !(subset.forall( _ == sum / 5 )) )
+  }
+
+  // TODO: Change this, this is still find all combos, and they can be intersected
+  def findCards(cardUsed: Card) = {
+    val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
+    val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue )
+    possibleCombos
   }
 
   def optimalMove(): Unit = ???
