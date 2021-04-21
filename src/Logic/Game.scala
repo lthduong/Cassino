@@ -10,7 +10,10 @@ class Game {
   val handler = new IOHandler
 
   private var players = Buffer[Player]()
-  private var turn    = players.head       // TODO: Fix this, in case players is empty, this will be index out of bound
+  private var turn    = 0
+  // A possible fix is that change turn to 0, adding the method playerTurn, which is players( turn % players.length ), changing the advance and setTurn methods,
+  // adding a small change to the file, i.e one more line to record the turn number or getting turn number based on the player turn and players buffer(i.e what is his
+  // index in the players in the file)
 
   private val deck: Buffer[Card] = {
     var cardList = Buffer[Card]()
@@ -25,15 +28,14 @@ class Game {
 
   // Some methods to help getting values of the vars
   def playersList = players
-  def playerTurn = this.turn
+  def getTurn     = turn
+  def playerTurn  = players(turn % players.length)
 
   // Use to advancing turn
-  def advanceTurn() = { turn = players((players.indexOf(turn) + 1) % players.length) }
+  def advanceTurn() = { turn += 1 }
 
   //Use to set turn to a specific player
-  def setTurn(playerName: String) = {
-    if(players.map( _.name ).contains(playerName)) turn = players.find( _.name == playerName ).get
-  }
+  def setTurn(number: Int) = { turn = number }
 
   //Use to remove a specific card from the deck
   def removeFromDeck(card: Card) = if(deck.contains(card)) deck -= card
@@ -55,12 +57,10 @@ class Game {
 
   //Deal cards to the targeted player until he has 4 cards
   def deal(player: Player): Unit = {
-    if(players.contains(player)) {
-      this.shuffle
-      while(player.hand.size < 4 && deck.nonEmpty) {
-        player.addCardHand(deck.head)
-        deck -= deck.head
-      }
+    this.shuffle
+    while(player.hand.size < 4 && deck.nonEmpty) {
+      player.addCardHand(deck.head)
+      deck -= deck.head
     }
   }
 

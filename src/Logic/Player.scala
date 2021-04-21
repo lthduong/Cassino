@@ -87,13 +87,14 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     res.filter( subset => !(subset.forall( _ == sum / 5 )) )
   }
 
-  // TODO: Change this, this is still find all combos, and they can be intersected
+  // TODO: Test this after fixing the turn in Game class
   def findCards(cardUsed: Card) = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
-    val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue )
-    possibleCombos.toSet.subsets.map( subset => subset.toVector.map( _.toVector ) ).filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos) )
+    val allSetsOfCombos = allCombos.toSet.subsets
+    allSetsOfCombos.map( subset => subset.toVector.map( _.toVector ) ).filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos) )
   }
 
+  // TODO: Complete this
   def optimalMove(): Unit = ???
 
 }

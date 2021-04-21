@@ -21,14 +21,14 @@ class IOHandler {
     for(player <- players) {
       fileContent += "*Cmp: " + player.isInstanceOf[ComputerPlayer].toString
       fileContent += "Name: " + player.name
-      fileContent += "Hand:" + player.hand.map( _.toString ).mkString("")
-      fileContent += "Pile:" + player.pile.map( _.toString ).mkString("")
+      fileContent += "Hand:"  + player.hand.map( _.toString ).mkString("")
+      fileContent += "Pile:"  + player.pile.map( _.toString ).mkString("")
       fileContent += "Score:" + player.getScore
     }
 
     // Adding turn info
     fileContent += "#Turn"
-    fileContent += "Turn player: " + game.playerTurn.name
+    fileContent += "Turn: "  + game.getTurn
     fileContent += "Table: " + game.table.allCard.map( _.toString ).mkString("")
 
     fileContent += "#END"
@@ -188,8 +188,8 @@ class IOHandler {
         }
       }
 
-      val turnPlayer = turnBuffer(0).drop(turnBuffer(0).indexOf(':') + 1).trim
-      game.setTurn(turnPlayer)                                                 // Set up turn
+      val turn = turnBuffer(0).drop(turnBuffer(0).indexOf(':') + 1).trim
+      game.setTurn(turn.toInt)                                                 // Set up turn
 
       val tableCard = turnBuffer(1).drop(turnBuffer(1).indexOf(':') + 1).trim
       addCardToTable(tableCard, game)                                          // Set up table
