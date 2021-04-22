@@ -163,7 +163,7 @@ class IOHandler {
         addCardToHand(handCards, newPlayer)
         addCardToPile(pileCards, newPlayer)
         newPlayer.updateScore(score.toInt)
-        game.addPlayers(newPlayer)
+        game.addPlayer(newPlayer)
       }
 
 

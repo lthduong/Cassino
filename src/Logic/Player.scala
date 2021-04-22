@@ -57,6 +57,8 @@ case class Player(name: String, game: Game) {
   // The score regardless of the number of Spades and Card
   def rawScore       = this.sweep + numberOfAce + hasDiamondTen * 2 + hasSpadeTwo
 
+  override def toString = this.name
+
 }
 
 
@@ -87,14 +89,16 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     res.filter( subset => !(subset.forall( _ == sum / 5 )) )
   }
 
-  // TODO: Test this after fixing the turn in Game class
-  def findCards(cardUsed: Card) = {
+  // TODO: Change this, one possible way is to choose only the sets that has the sum == cardUse, which can reduce the time to compute
+  def findCards(cardUsed: Card) /*: Vector[Vector[Vector[Card]]]*/ = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
-    val allSetsOfCombos = allCombos.toSet.subsets
-    allSetsOfCombos.map( subset => subset.toVector.map( _.toVector ) ).filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos) )
+    val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue ).toVector.map( subset => subset.toVector )
+    //val comboCombination = possibleCombos.toSet.subsets.toVector.map( subset => subset.toVector.map( _.toVector ) )
+    //comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos) ).drop(1)
+    possibleCombos
   }
 
-  // TODO: Complete this
+  // TODO: Complete this. Note that it might be wise to include a function that if there are too many card on the table( >= 23 ), the cmp player will not drop
   def optimalMove(): Unit = ???
 
 }

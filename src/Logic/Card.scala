@@ -8,7 +8,7 @@ import java.io._
 case class Card(name: String, suit: String) {
 
   // TODO: Change the file path to a correct one
-  val image: BufferedImage = ImageIO.read(new File("Image/" + this.toString))
+  //val image: BufferedImage = ImageIO.read(new File("Image/" + this.toString))
 
   val value: Int = {
     this.name match {

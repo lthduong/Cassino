@@ -34,28 +34,27 @@ class Game {
   // Use to advancing turn
   def advanceTurn() = { turn += 1 }
 
-  //Use to set turn to a specific player
+  // Use to set turn to a specific player
   def setTurn(number: Int) = { turn = number }
 
-  //Use to remove a specific card from the deck
+  // Use to remove a specific card from the deck
   def removeFromDeck(card: Card) = if(deck.contains(card)) deck -= card
 
-  def addPlayers(player: Player): Unit = { players = players :+ player }
+  def addPlayer(player: Player): Unit = { players = players :+ player }
 
   def shuffle = Random.shuffle(deck)
 
+  // To check if the card vector is overlapped, first zip the flatten vector of combo with its values and convert to Set, and then
+  // sum all the value, if the value is n * cardUse.handValue, then there is no overlap
+  // TODO: Change this, one way is to take the combo only, turn it into a set and map the sum to optain if the combo is overlap or not
   def validCapture(cardUse: Card, cardTake: Vector[Vector[Card]]): Boolean = {
     val checkSum = cardTake.forall( cardVector => cardVector.map( _.value ).sum == cardUse.handValue )
-    var checkOverlap = true
-    for(vector <- cardTake) {
-      val theRest = cardTake.filter( _ != vector ).flatten  // The flattened cardTake with the vector in check removed
-      val overlap = vector.intersect(theRest).isEmpty       // Find out if the Rest and vector is overlap
-      checkOverlap = checkOverlap && overlap                // Update the check overlap
-    }
-    checkSum && checkOverlap
+    var numberOfCombos = cardTake.length
+    val cardSum = cardTake.flatten.zip(cardTake.flatten.map( _.value )).toSet.toMap.values.sum
+    checkSum && (cardSum == numberOfCombos * cardUse.handValue)
   }
 
-  //Deal cards to the targeted player until he has 4 cards
+  // Deal cards to the targeted player until he has 4 cards
   def deal(player: Player): Unit = {
     this.shuffle
     while(player.hand.size < 4 && deck.nonEmpty) {
@@ -72,7 +71,7 @@ class Game {
 
   def playAgain: Game = {
     val ng = new Game
-    players.foreach(ng.addPlayers)
+    players.foreach(ng.addPlayer)
     ng
   }
 
