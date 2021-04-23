@@ -41,9 +41,8 @@ class Game {
 
   def shuffle = Random.shuffle(deck)
 
-  // To check if the card vector is overlapped, first zip the flatten vector of combo with its values and convert to Set, and then
+  // To check if the card vector is overlapped, first zip the vector of combo with its values and convert to Set, and then
   // sum all the value, if the value is n * cardUse.handValue, then there is no overlap
-  // TODO: Change this, one way is to take the combo only, turn it into a set and map the sum to optain if the combo is overlap or not
   def validCapture(cardUse: Card, cardTake: Vector[Card]): Boolean = {
     val cardSum = cardTake.zip(cardTake.map( _.value )).toSet.toMap.values.sum
     (cardSum != 0) && (cardSum % cardUse.handValue == 0)

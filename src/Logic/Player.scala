@@ -65,6 +65,18 @@ case class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
+  /* Some aulixiary methods, but not need for now
+  private def containsSubset[T](allSets: Vector[Set[T]], checkSet: Set[T]): Boolean = {
+    allSets.forall( subset => checkSet.subsetOf(subset) )
+  }
+
+
+  private def validCheck(cardUse: Card, cardTake: Vector[Vector[Card]]): Boolean = {
+    val cardSum = cardTake.flatten.zip(cardTake.flatten.map( _.value )).toSet.toMap.values.sum
+    (cardSum != 0) && (cardSum % cardUse.handValue == 0)
+  }
+  */
+
   def findCards(cardUsed: Card): Vector[Vector[Vector[Card]]] = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
     val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue ).toVector.map( subset => subset.toVector )
@@ -72,15 +84,22 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) )
   }
 
+  /*
+  val takenCombination = comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) )
+    takenCombination.filter( set => !containsSubset(takenCombination.filter( _ != set ).map( _.toSet ), set.toSet) )
+  */
 
   def optimalMove(): Unit = {
-    if(this.game.table.allCard.length >= 9) {
-      // 1: filter all the cards that is bigger than 14
-    } else if(this.game.table.allCard.length >= 14) {
-      // 1: filter all of the cards that is bigger than 10
-      // 2: calculate all possible combination for each card. For each card, getting the combination that has maximum length
-      //
+    val possibleCardToUse = {
+      if(this.game.table.allCard.length > 9) {
+        handCards.filter( _.handValue < 13 )
+      } else if(this.game.table.allCard.length > 14) {
+        handCards.filter( _.handValue < 10 )
+      }
     }
+      // If the number of card on table is 16 or greater, and there are no cards smaller than 6 in hand, drop
+      // 1: calculate all possible combination for each card. For each card, getting the combination that has maximum length
+      // and sum it up with the cardUse value and choose base on that
   }
 
 }

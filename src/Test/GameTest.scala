@@ -20,7 +20,7 @@ object GameTest extends App {
 
   // Deal cards to table and check
   for(n <- 1 to 10) game.shuffle
-  for(n <- 1 to 9) game.dealTable()
+  for(n <- 1 to 16) game.dealTable()
   println("Table Card: " + game.table.allCard)
 
   // Checking validTrade:
@@ -38,7 +38,8 @@ object GameTest extends App {
   game.playersList.foreach( player => println(player.name + " hand: " + player.hand) )
 
   // Checking findCards
-  println(cmpPlayer.findCards(new Card("9", "h")))
+  println(cmpPlayer.findCards(new Card("6", "d")))
+  //println(cmpPlayer.findCards(new Card("9", "h")))
   //println(cmpPlayer.findCards(new Card("0", "h")))
   //println(cmpPlayer.findCards(new Card("j", "h")))
   //println(cmpPlayer.findCards(new Card("q", "d")))
