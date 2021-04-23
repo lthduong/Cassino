@@ -11,9 +11,6 @@ class Game {
 
   private var players = Buffer[Player]()
   private var turn    = 0
-  // A possible fix is that change turn to 0, adding the method playerTurn, which is players( turn % players.length ), changing the advance and setTurn methods,
-  // adding a small change to the file, i.e one more line to record the turn number or getting turn number based on the player turn and players buffer(i.e what is his
-  // index in the players in the file)
 
   private val deck: Buffer[Card] = {
     var cardList = Buffer[Card]()
@@ -47,11 +44,9 @@ class Game {
   // To check if the card vector is overlapped, first zip the flatten vector of combo with its values and convert to Set, and then
   // sum all the value, if the value is n * cardUse.handValue, then there is no overlap
   // TODO: Change this, one way is to take the combo only, turn it into a set and map the sum to optain if the combo is overlap or not
-  def validCapture(cardUse: Card, cardTake: Vector[Vector[Card]]): Boolean = {
-    val checkSum = cardTake.forall( cardVector => cardVector.map( _.value ).sum == cardUse.handValue )
-    var numberOfCombos = cardTake.length
-    val cardSum = cardTake.flatten.zip(cardTake.flatten.map( _.value )).toSet.toMap.values.sum
-    checkSum && (cardSum == numberOfCombos * cardUse.handValue)
+  def validCapture(cardUse: Card, cardTake: Vector[Card]): Boolean = {
+    val cardSum = cardTake.zip(cardTake.map( _.value )).toSet.toMap.values.sum
+    (cardSum != 0) && (cardSum % cardUse.handValue == 0)
   }
 
   // Deal cards to the targeted player until he has 4 cards

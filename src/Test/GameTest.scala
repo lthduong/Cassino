@@ -20,7 +20,7 @@ object GameTest extends App {
 
   // Deal cards to table and check
   for(n <- 1 to 10) game.shuffle
-  for(n <- 1 to 23) game.dealTable()
+  for(n <- 1 to 9) game.dealTable()
   println("Table Card: " + game.table.allCard)
 
   // Checking validTrade:
@@ -30,18 +30,22 @@ object GameTest extends App {
   val card4 = new Card("2", "c")
   val card5 = new Card("3", "s")
   val card6 = new Card("1", "s")
-  val valid = game.validCapture(card1, Vector(Vector(card2, card3), Vector(card2, card4, card5)))
-  println(valid)
+  //val valid = game.validCapture(card1, Vector(card2, card3, card6, card4, card5))
+  //println(valid)
 
   // Deal cards to players and check
   game.playersList.foreach( player => game.deal(player) )
   game.playersList.foreach( player => println(player.name + " hand: " + player.hand) )
 
   // Checking findCards
-  println(cmpPlayer.findCards(new Card("j", "h")))
-  println(cmpPlayer.findCards(new Card("q", "d")))
-  println(cmpPlayer.findCards(new Card("k", "h")))
-  println(cmpPlayer.findCards(new Card("0", "d")))
-
+  println(cmpPlayer.findCards(new Card("9", "h")))
+  //println(cmpPlayer.findCards(new Card("0", "h")))
+  //println(cmpPlayer.findCards(new Card("j", "h")))
+  //println(cmpPlayer.findCards(new Card("q", "d")))
+  //println(cmpPlayer.findCards(new Card("k", "h")))
+  //println(cmpPlayer.findCards(new Card("1", "h")))
+  //println(cmpPlayer.findCards(new Card("2", "s")))
+  //println(cmpPlayer.findCards(new Card("0", "d")))
+  // If number of cards on table is too large, and the card that need to find is higher than 13, then the method will take too long to run
 
 }

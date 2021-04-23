@@ -29,10 +29,11 @@ case class Player(name: String, game: Game) {
 
 
 
-  def capture(cardUse: Card, cardTake: Vector[Vector[Card]]) = {
+  def capture(cardUse: Card, cardTake: Vector[Card]) = {
     if(handCards.contains(cardUse) && game.validCapture(cardUse, cardTake)) {
-      cardTake.foreach( cardVector => handCards ++= cardVector )
-      handCards += cardUse
+      //cardTake.foreach( cardVector => pileCards ++= cardVector )
+      pileCards ++= cardTake
+      pileCards += cardUse
       if(game.table.allCard.isEmpty) sweep += 1
       game.deal(this)
       game.advanceTurn()
@@ -64,41 +65,22 @@ case class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
-  // Aulixiary method to find subsets with duplicate elements, since set does not contains duplicate
-  private def findDuplicatedSubsets(sum: Int): Buffer[Buffer[Int]] = {
-    val res = Buffer[Buffer[Int]]()
-    for(i <- 2 to 4) {
-      if (sum % i == 0) {
-        res += Array.fill(i)(sum / i).toBuffer
-      }
-    }
-    res
-  }
-
-  // Likely unnecessary
-  private def findCombinations(sum: Int, takeFrom: Buffer[Int]): Buffer[Buffer[Int]] = {
-    val res = Buffer[Buffer[Int]]()
-    val possibleNumbers = takeFrom.filter( _ <= sum ).toSet
-    possibleNumbers.subsets().filter( _.sum == sum ).foreach( res += _.toBuffer )
-    for(n <- possibleNumbers) {
-      val duplicateSubSets = findDuplicatedSubsets(sum - n)
-      if(duplicateSubSets.nonEmpty) {
-        res ++= (duplicateSubSets.map( _ :+ n ))
-      }
-    }
-    res.filter( subset => !(subset.forall( _ == sum / 5 )) )
-  }
-
-  // TODO: Change this, one possible way is to choose only the sets that has the sum == cardUse, which can reduce the time to compute
-  def findCards(cardUsed: Card) /*: Vector[Vector[Vector[Card]]]*/ = {
+  def findCards(cardUsed: Card): Vector[Vector[Vector[Card]]] = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
     val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue ).toVector.map( subset => subset.toVector )
-    //val comboCombination = possibleCombos.toSet.subsets.toVector.map( subset => subset.toVector.map( _.toVector ) )
-    //comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos) ).drop(1)
-    possibleCombos
+    val comboCombination = possibleCombos.toSet.subsets.toVector.map( subset => subset.toVector.map( _.toVector ) )
+    comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) )
   }
 
-  // TODO: Complete this. Note that it might be wise to include a function that if there are too many card on the table( >= 23 ), the cmp player will not drop
-  def optimalMove(): Unit = ???
+
+  def optimalMove(): Unit = {
+    if(this.game.table.allCard.length >= 9) {
+      // 1: filter all the cards that is bigger than 14
+    } else if(this.game.table.allCard.length >= 14) {
+      // 1: filter all of the cards that is bigger than 10
+      // 2: calculate all possible combination for each card. For each card, getting the combination that has maximum length
+      //
+    }
+  }
 
 }
