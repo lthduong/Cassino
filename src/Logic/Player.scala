@@ -34,6 +34,8 @@ case class Player(name: String, game: Game) {
       //cardTake.foreach( cardVector => pileCards ++= cardVector )
       pileCards ++= cardTake
       pileCards += cardUse
+      cardTake.foreach( this.game.table.removeCard(_) )
+      handCards -= cardUse
       if(game.table.allCard.isEmpty) sweep += 1
       game.deal(this)
       game.advanceTurn()
@@ -89,15 +91,30 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     takenCombination.filter( set => !containsSubset(takenCombination.filter( _ != set ).map( _.toSet ), set.toSet) )
   */
 
+  private def findMax(cardVector: Vector[Card]) = {
+    val cardMap = cardVector.map( _.value ).zip(cardVector).toMap
+    cardMap(cardMap.keys.max)
+  }
+
   def optimalMove(): Unit = {
-    val possibleCardToUse = {
-      if(this.game.table.allCard.length > 9) {
-        handCards.filter( _.handValue < 13 )
-      } else if(this.game.table.allCard.length > 14) {
-        handCards.filter( _.handValue < 10 )
+    val sweepCard = this.handCards.find( card => this.game.table.allCard.map( _.value ).sum % card.handValue == 0 )
+    if(sweepCard.isDefined) capture(sweepCard.get, this.game.table.allCard.toVector)
+    else {
+      val possibleCardToUse = {
+        if(this.game.table.allCard.length > 9) handCards.filter( _.handValue < 13 )
+        else if(this.game.table.allCard.length > 14) handCards.filter( _.handValue < 10 )
+        else if(this.game.table.allCard.length > 16) handCards.filter( _.handValue < 6 )
+        else handCards
+      }
+      if(possibleCardToUse.isEmpty || this.game.table.allCard.isEmpty) {
+        drop(findMax(handCards.toVector))
+      } else {
+      ???
       }
     }
-      // If the number of card on table is 16 or greater, and there are no cards smaller than 6 in hand, drop
+      // If sum of all cards on table = n * some card in hand's handValue, sweep: Done
+      // If there are no cards on table or no card that can be used, drop the highest value card: Done
+      // If the number of card on table is 16 or greater, and there are no cards smaller than 6 in hand, drop: Done
       // 1: calculate all possible combination for each card. For each card, getting the combination that has maximum length
       // and sum it up with the cardUse value and choose base on that
   }
