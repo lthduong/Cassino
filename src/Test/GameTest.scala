@@ -38,7 +38,7 @@ object GameTest extends App {
   game.playersList.foreach( player => println(player.name + " hand: " + player.hand) )
 
   // Checking findCards
-  println(cmpPlayer.findCards(new Card("6", "d")))
+  //println(cmpPlayer.findCards(new Card("6", "d")))
   //println(cmpPlayer.findCards(new Card("9", "h")))
   //println(cmpPlayer.findCards(new Card("0", "h")))
   //println(cmpPlayer.findCards(new Card("j", "h")))
@@ -48,5 +48,12 @@ object GameTest extends App {
   //println(cmpPlayer.findCards(new Card("2", "s")))
   //println(cmpPlayer.findCards(new Card("0", "d")))
   // If number of cards on table is too large, and the card that need to find is higher than 13, then the method will take too long to run
+
+  // Checking optimalMove
+  cmpPlayer.optimalMove()
+  println("Turn: " + game.playerTurn)
+  println("Table Card: " + game.table.allCard)
+  println("Cmp hand: " + cmpPlayer.hand)
+  println("Cmp pile: " + cmpPlayer.pile)
 
 }

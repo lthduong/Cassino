@@ -79,11 +79,11 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
   }
   */
 
-  def findCards(cardUsed: Card): Vector[Vector[Vector[Card]]] = {
+  def findCards(cardUsed: Card): Vector[Vector[Card]] = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
     val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue ).toVector.map( subset => subset.toVector )
     val comboCombination = possibleCombos.toSet.subsets.toVector.map( subset => subset.toVector.map( _.toVector ) )
-    comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) )
+    comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) ).map( _.flatten )
   }
 
   /*
@@ -91,8 +91,13 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     takenCombination.filter( set => !containsSubset(takenCombination.filter( _ != set ).map( _.toSet ), set.toSet) )
   */
 
-  private def findMax(cardVector: Vector[Card]) = {
+  private def findMaxValueCard(cardVector: Vector[Card]) = {
     val cardMap = cardVector.map( _.value ).zip(cardVector).toMap
+    cardMap(cardMap.keys.max)
+  }
+
+  private def findMaxElementsSubset(card: Card) = {
+    val cardMap = findCards(card).map( _.length ).zip(findCards(card)).toMap
     cardMap(cardMap.keys.max)
   }
 
@@ -106,17 +111,20 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
         else if(this.game.table.allCard.length > 16) handCards.filter( _.handValue < 6 )
         else handCards
       }
-      if(possibleCardToUse.isEmpty || this.game.table.allCard.isEmpty) {
-        drop(findMax(handCards.toVector))
+      if(possibleCardToUse.isEmpty || this.game.table.allCard.isEmpty || possibleCardToUse.forall( findCards(_).isEmpty )) {
+        drop(findMaxValueCard(handCards.toVector))
       } else {
-      ???
+        val cardWithHighestSubset = possibleCardToUse.zip(possibleCardToUse.map( findMaxElementsSubset(_) )).toVector
+        val sum = (cardWithHighestSubset.map( card => card._1.handValue + card._2.length )).zip(cardWithHighestSubset).toMap
+        val minSum = sum(sum.keys.min)
+        capture(minSum._1, minSum._2)
       }
     }
       // If sum of all cards on table = n * some card in hand's handValue, sweep: Done
       // If there are no cards on table or no card that can be used, drop the highest value card: Done
       // If the number of card on table is 16 or greater, and there are no cards smaller than 6 in hand, drop: Done
       // 1: calculate all possible combination for each card. For each card, getting the combination that has maximum length
-      // and sum it up with the cardUse value and choose base on that
+      // and sum it up with the cardUse value and choose base on that. Goal: Let the cards'value on the field as high as possible to not let others capture easily.
   }
 
 }
