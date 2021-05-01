@@ -1,20 +1,21 @@
 package src.GUI
 
 import scala.swing._
+import scala.swing.event._
 import java.awt.Color
 import src.Logic.Game
 
 object MainScreen extends SimpleSwingApplication {
 
-  // Creating the menu bar
-  val saveButton = new Button("Save")
-  val loadButton = new Button("Load")
-  val instructionButton = new Button("Instruction")
 
-  val menu = new MenuBar
-  menu.contents += saveButton
-  menu.contents += loadButton
-  menu.contents += instructionButton
+  // Creating the menu bar
+  val save = new Button("Save")
+  val load = new Button("Load")
+  val ins = new Button("Instruction")
+  val game = new Menu("Game") { contents ++= Vector(save, load) }
+  val help = new Menu("Help") { contents += ins }
+  val menu = new MenuBar { contents ++= Vector(game, help) }
+
 
   // Creating the computer player prompt and player selection
   val cmpPrompt      = new Label("Do you want computer players?")
@@ -22,24 +23,28 @@ object MainScreen extends SimpleSwingApplication {
   val playerPrompt   = new Label("How many players?")
   val playerSelect   = new ComboBox[Int](1 to 12)
   val confirm        = new Button("Ok")
+  val cmpPanel = new FlowPanel {
+    contents  += cmpPrompt
+    contents  += computerPlayer
+    //background = Color.green
+  }
 
-  // The panel contains the computer player prompt
-  val cmpPanel = new FlowPanel
-  cmpPanel.contents  += cmpPrompt
-  cmpPanel.contents  += computerPlayer
-  cmpPanel.background = Color.green
 
   // The panel contains the player prompt
-  val playerPanel = new FlowPanel
-  playerPanel.contents  += playerPrompt
-  playerPanel.contents  += playerSelect
-  playerPanel.contents  += confirm
-  playerPanel.background = Color.green
+  val playerPanel = new FlowPanel {
+    contents  += playerPrompt
+    contents  += playerSelect
+    contents  += confirm
+    //background = Color.green
+  }
+
 
   // Content of the screen
-  val screenContent = new BoxPanel(Orientation.Vertical)
-  screenContent.contents += cmpPanel
-  screenContent.contents += playerPanel
+  val screenContent = new BoxPanel(Orientation.Vertical) {
+    contents += cmpPanel
+    contents += playerPanel
+  }
+
 
   // Adding the components together
   def top = new MainFrame {
@@ -49,6 +54,15 @@ object MainScreen extends SimpleSwingApplication {
     contents      = screenContent
   }
 
+  // Event handling
+  this.listenTo(ins)
+  this.reactions += {
+    case clickEvent: ButtonClicked =>
+      val source = clickEvent.source
+      source match {
+        case this.ins => InstructionScreen.top.visible = true
+      }
+  }
 
 
 }

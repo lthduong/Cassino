@@ -120,7 +120,7 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
         capture(minSum._1, minSum._2)
       }
     }
-      // If sum of all cards on table = n * some card in hand's handValue, sweep: Done
+      // If sum of all cards on table = n * some card in hand's handValue (i.e, sweepable), sweep: Done
       // If there are no cards on table or no card that can be used, drop the highest value card: Done
       // If the number of card on table is 16 or greater, and there are no cards smaller than 6 in hand, drop: Done
       // 1: calculate all possible combination for each card. For each card, getting the combination that has maximum length
