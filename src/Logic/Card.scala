@@ -8,7 +8,7 @@ import java.io._
 case class Card(name: String, suit: String) {
 
   // Note: the path "." is the root of the project
-  val image: BufferedImage = ImageIO.read(new File("./Image/" + this.toString + ".png"))
+  val image: BufferedImage = ImageIO.read(new File("./Image/Cards/" + this.toString + ".png"))
 
   val value: Int = {
     this.name match {

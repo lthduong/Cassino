@@ -69,8 +69,8 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
   this.listenTo(nameCf)
   this.reactions += {
     case b: ButtonClicked =>
-      val button = b.source
-      button match {
+      val source = b.source
+      source match {
         case this.plrCf => {
           val nrPlayers = cmpPlayers.item + humPlayers.item
           val nameInput = getName(humPlayers.item)

@@ -1,6 +1,7 @@
 package src.GUI
 
 import scala.swing._
+import scala.swing.event.ButtonClicked
 
 object CassinoApp extends SimpleSwingApplication {
 
@@ -19,5 +20,12 @@ object CassinoApp extends SimpleSwingApplication {
   }
 
   this.listenTo(ins)
-
+  this.reactions += {
+    case b: ButtonClicked => {
+      val source = b.source
+      source match {
+        case this.ins =>InstructionScreen.top.visible = true
+      }
+    }
+  }
 }

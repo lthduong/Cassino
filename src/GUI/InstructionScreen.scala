@@ -1,18 +1,63 @@
 package src.GUI
 
 import scala.swing._
+import javax.imageio.ImageIO
+import java.io.File
+import java.awt.image.BufferedImage
+import java.awt.{Graphics2D, Color}
 
 object InstructionScreen extends SimpleSwingApplication {
 
-  val rule: String = "The deck is shuffled in the beginning of every round and the dealer deals 4 cards to every player (they are not visible to other players) and 4 cards on the table (visible for everyone). The rest of the cards are left on the table upside down. The player next to the dealer starts the game. On the next round he/she is the dealer.\nActions in each round:\nA player can play out one of his/her cards: it can be used either for taking cards from the table or to just putting it on the table. If the player cannot take anything from the table, he/she must put one of his/her cards on the table.\nIf the player takes cards from the table, he/she puts them in a separate pile of his/her own. The pile is used to count the points after the round has ended.\nThe number of cards on the table can vary. For example, if someone takes all the cards from the table, the next player must put a card on the empty table.\nPlayer must draw a new card from the deck after using a card so that he/she has always 4 cards in his/her hand. (When the deck runs out, everyone plays until there are no cards left in any player’s hand).\nPlayer can use a card to take one or more cards of the same value and cards such that their summed value is equal to the used card.\nSweep:\nIf some player gets all the cards from the table at the same time, he/she gets a so- called sweep which is written down.\nSpecial cards:\nThere are a couple of cards that are more valuable in the hand than in the table,\nAces: 14 in hand, 1 on table\nDiamonds-10: 16 in hand, 10 on table\nSpades-2: 15 in hand, 2 on table\nScoring: \nWhen every player runs out of cards, the last player to take cards from the table gets the rest of the cards from the table. After this the points are calculated and added to the existing scores.\nThe following things grant points:\nEach sweep grants 1 point.\nEach Ace grants 1 point.\nThe player with most cards gets 1 point.\nThe player with most spades gets 2 points.\nhe player with Diamonds-10 gets 2 points.\nThe player with Spades-2 gets 1 point."
+  val rule: String = {
+    " 1. The deck is shuffled in the beginning of every round and each player has 4 cards, also there are 4 cards on the table (visible for everyone).\n\n" +
+    " 2. Each round, a player can either use a card to take other cards from the table or to put it on the table. If the player cannot take anything from the\n" +
+    " table, he/she must put one of his/her cards on the table. If the player takes cards from the table, he/she puts them in a separate pile of his/her own.\n" +
+    " 3. The pile is used to count the points after the round has ended.\n\n" +
+    " 4. The player can use a card to take one or more cards of the same value and cards such that their summed value is equal to the used card.\n\n" +
+    " 5. If some player gets all the cards from the table at the same time, he/she gets a so- called sweep which is written down.\n\n" +
+    " 6. There are a couple of cards that are more valuable in the hand than in the table,\n" +
+    "       Aces: 14 in hand, 1 on table\n" +
+    "       Diamonds-10: 16 in hand, 10 on table\n" +
+    "       Spades-2: 15 in hand, 2 on table\n\n" +
+    " 7. When every player runs out of cards, the last player to take cards gets the rest of the cards on the table, and the point are calculated using the rule:\n" +
+    "       Each sweep grants 1 point.\n" +
+    "       Each Ace grants 1 point.\n" +
+    "       The player with most cards gets 1 point.\n" +
+    "       The player with most spades gets 2 points.\n" +
+    "       The player with Diamonds-10 gets 2 points.\n" +
+    "       The player with Spades-2 gets 1 point.\n"
+  }
+
+  val instructionTitle = new Label("Instruction:") {
+    font = new Font("Arial", java.awt.Font.BOLD, 40)
+    foreground = new Color(216, 8, 8)
+  }
+
+  val pane = new BoxPanel(Orientation.Vertical) {
+    contents += new FlowPanel {
+      contents += instructionTitle
+      override def paintComponent(g: Graphics2D) = {
+        val image = ImageIO.read(new File("./Image/Others/instruction.png")).getScaledInstance(52, 52, 55)
+        g.drawImage(image, 470, 3, null)
+      }
+    }
+    contents += new TextArea(rule) {
+      editable = false
+      font = new Font("Arial", 0, 20)
+      background = new Color(0, 153, 0)
+    }
+    background = new Color(0, 153, 0)
+  }
 
   val instruction = new ScrollPane {
-    contents = new Label(rule)
+    contents = pane
+    background = new Color(0, 153, 0)
   }
 
   def top = new Frame {
     title = "Instruction"
     contents = instruction
+    resizable = false
   }
 
 }
