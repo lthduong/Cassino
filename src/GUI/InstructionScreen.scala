@@ -3,7 +3,6 @@ package src.GUI
 import scala.swing._
 import javax.imageio.ImageIO
 import java.io.File
-import java.awt.image.BufferedImage
 import java.awt.{Graphics2D, Color}
 
 object InstructionScreen extends SimpleSwingApplication {
@@ -28,7 +27,7 @@ object InstructionScreen extends SimpleSwingApplication {
     "       The player with Spades-2 gets 1 point.\n"
   }
 
-  val instructionTitle = new Label("Instruction:") {
+  val instructionTitle = new Label("Instruction") {
     font = new Font("Arial", java.awt.Font.BOLD, 40)
     foreground = new Color(216, 8, 8)
   }
@@ -38,7 +37,7 @@ object InstructionScreen extends SimpleSwingApplication {
       contents += instructionTitle
       override def paintComponent(g: Graphics2D) = {
         val image = ImageIO.read(new File("./Image/Others/instruction.png")).getScaledInstance(52, 52, 55)
-        g.drawImage(image, 470, 3, null)
+        g.drawImage(image, 490, 3, null)
       }
     }
     contents += new TextArea(rule) {

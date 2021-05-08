@@ -7,7 +7,7 @@ import src.Logic.Game
 
 // This is the class acts as the game screen
 
-class GameScreen(game: Game) extends SimpleSwingApplication {
+class GameScreen(game: Game) extends BoxPanel(Orientation.Vertical) {
 
   def top = ???
 

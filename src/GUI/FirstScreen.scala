@@ -1,12 +1,10 @@
 package src.GUI
 
-import scala.collection.mutable.Buffer
 import scala.swing._
 import scala.swing.event._
 import java.awt.Color
-import src.Logic.Game
-import javax.swing.SwingConstants
-
+import javax.imageio.ImageIO
+import java.io.File
 
 object FirstScreen extends BoxPanel(Orientation.Vertical) {
 
@@ -22,7 +20,7 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
 
   val titlePanel = new FlowPanel {
     title.font = new Font("Arial", 0, 60)
-    maximumSize = new Dimension(1200, 100)
+    maximumSize = new Dimension(1200, 200)
     contents += title
     background = new Color(0, 153, 0)
   }
@@ -44,7 +42,8 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
     background = new Color(0, 153, 0)
   }
 
-  val midPanel = new FlowPanel {
+
+  val mainPanel = new FlowPanel {
     contents += plrPanel
     background = new Color(0, 153, 0)
   }
@@ -69,12 +68,12 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
     namePrompt
   }
 
+
   contents += titlePanel
-  contents += midPanel
-  background = new Color(0, 153, 0)
+  contents += mainPanel
+
 
   this.listenTo(plrCf)
-  this.listenTo(nameCf)
   this.listenTo(back)
   this.reactions += {
     case b: ButtonClicked =>
@@ -83,20 +82,18 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
         case this.plrCf => {
           val nrPlayers = cmpPlayers.item + humPlayers.item
           val nameInput = getName(humPlayers.item)
-          midPanel.contents.clear()
-          midPanel.contents += getName(humPlayers.item)
+          mainPanel.contents.clear()
+          mainPanel.contents += getName(humPlayers.item)
           this.repaint()
           this.revalidate()
         }
         case this.back => {
-          midPanel.contents.clear()
-          midPanel.contents += plrPanel
+          mainPanel.contents.clear()
+          mainPanel.contents += plrPanel
           this.repaint()
           this.revalidate()
         }
       }
   }
-
-
 
 }
