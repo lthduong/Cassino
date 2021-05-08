@@ -1,6 +1,5 @@
 package src.GUI
 
-
 import scala.collection.mutable.Buffer
 import scala.swing._
 import scala.swing.event._
@@ -18,12 +17,14 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
   val cmpPrompt = new Label("Number of computer players")
   val cmpPlayers = new ComboBox(0 to 3)
   val nameCf = new Button("Confirm")
+  val back = new Button("Back")
 
 
   val titlePanel = new FlowPanel {
     title.font = new Font("Arial", 0, 60)
     maximumSize = new Dimension(1200, 100)
     contents += title
+    background = new Color(0, 153, 0)
   }
 
 
@@ -43,6 +44,11 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
     background = new Color(0, 153, 0)
   }
 
+  val midPanel = new FlowPanel {
+    contents += plrPanel
+    background = new Color(0, 153, 0)
+  }
+
 
   // This method will create a panel to input names
   def getName(number: Int): BoxPanel = {
@@ -55,18 +61,21 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
         }
         contents += namePanel
       }
+      maximumSize = new Dimension(1400, 900)
       background = new Color(0, 153, 0)
       contents += nameCf
+      contents += back
     }
     namePrompt
   }
 
-  contents += title
-  contents += plrPanel
+  contents += titlePanel
+  contents += midPanel
   background = new Color(0, 153, 0)
 
   this.listenTo(plrCf)
   this.listenTo(nameCf)
+  this.listenTo(back)
   this.reactions += {
     case b: ButtonClicked =>
       val source = b.source
@@ -74,8 +83,15 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
         case this.plrCf => {
           val nrPlayers = cmpPlayers.item + humPlayers.item
           val nameInput = getName(humPlayers.item)
-          this.plrPanel.contents.clear()
-          contents += getName(humPlayers.item)
+          midPanel.contents.clear()
+          midPanel.contents += getName(humPlayers.item)
+          this.repaint()
+          this.revalidate()
+        }
+        case this.back => {
+          midPanel.contents.clear()
+          midPanel.contents += plrPanel
+          this.repaint()
           this.revalidate()
         }
       }
