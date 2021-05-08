@@ -29,7 +29,7 @@ case class Player(name: String, game: Game) {
 
 
 
-  def capture(cardUse: Card, cardTake: Vector[Card]) = {
+  def capture(cardUse: Card, cardTake: Vector[Card]): Boolean = {
     if(handCards.contains(cardUse) && game.validCapture(cardUse, cardTake)) {
       //cardTake.foreach( cardVector => pileCards ++= cardVector )
       pileCards ++= cardTake
@@ -40,7 +40,9 @@ case class Player(name: String, game: Game) {
       game.deal(this)
       game.lastCapturer = this
       game.advanceTurn()
+      true
     }
+    else false
   }
 
   def addCardManually(cardAdd: Buffer[Card]) = {
@@ -48,13 +50,19 @@ case class Player(name: String, game: Game) {
     cardAdd.foreach( this.game.table.removeCard(_) )
   }
 
-  def drop(cardDrop: Card): Unit = {
+  def addHandManually(cardAdd: Buffer[Card]) = {
+    this.hand ++= cardAdd
+    //cardAdd.foreach( this.game.table.removeCard(_) )
+  }
+
+  def drop(cardDrop: Card): Boolean = {
     if(handCards.contains(cardDrop)) {
       game.table.addCard(cardDrop)
       handCards -= cardDrop
       game.deal(this)
       game.advanceTurn()
-    }
+      true
+    } else false
   }
 
   // Aulixiary methods to calculate score
@@ -73,17 +81,6 @@ case class Player(name: String, game: Game) {
 
 class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
-  /* Some aulixiary methods, but not need for now
-  private def containsSubset[T](allSets: Vector[Set[T]], checkSet: Set[T]): Boolean = {
-    allSets.forall( subset => checkSet.subsetOf(subset) )
-  }
-
-
-  private def validCheck(cardUse: Card, cardTake: Vector[Vector[Card]]): Boolean = {
-    val cardSum = cardTake.flatten.zip(cardTake.flatten.map( _.value )).toSet.toMap.values.sum
-    (cardSum != 0) && (cardSum % cardUse.handValue == 0)
-  }
-  */
 
   def findCards(cardUsed: Card): Vector[Vector[Card]] = {
     val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
@@ -92,10 +89,6 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) ).map( _.flatten )
   }
 
-  /*
-  val takenCombination = comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) )
-    takenCombination.filter( set => !containsSubset(takenCombination.filter( _ != set ).map( _.toSet ), set.toSet) )
-  */
 
   private def findMaxValueCard(cardVector: Vector[Card]) = {
     val cardMap = cardVector.map( _.value ).zip(cardVector).toMap
@@ -104,22 +97,27 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
 
   private def findMaxElementsSubset(card: Card) = {
     val cardMap = findCards(card).map( _.length ).zip(findCards(card)).toMap
+    println(cardMap.keys)
     cardMap(cardMap.keys.max)
   }
 
-  def optimalMove(): Unit = {
+  def optimalMove(): Boolean = {
     val sweepCard = this.handCards.find( card => this.game.table.allCard.map( _.value ).sum % card.handValue == 0 )
     if(sweepCard.isDefined) capture(sweepCard.get, this.game.table.allCard.toVector)
     else {
       val possibleCardToUse = {
-        if(this.game.table.allCard.length > 9) handCards.filter( _.handValue < 13 )
-        else if(this.game.table.allCard.length > 14) handCards.filter( _.handValue < 10 )
-        else if(this.game.table.allCard.length > 16) handCards.filter( _.handValue < 6 )
-        else handCards
+        if(this.game.table.allCard.length > 9) handCards.filter( _.handValue < 13 ).filter( findCards(_).nonEmpty )
+        //else if(this.game.table.allCard.length > 14) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
+        //else if(this.game.table.allCard.length > 16) handCards.filter( _.handValue < 6 ).filter( findCards(_).nonEmpty )
+        else if(this.game.table.allCard.length > 11) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
+        else handCards.filter( findCards(_).nonEmpty )
       }
-      if(possibleCardToUse.isEmpty || this.game.table.allCard.isEmpty || possibleCardToUse.forall( findCards(_).isEmpty )) {
+      println(possibleCardToUse)
+      println(possibleCardToUse.map( findCards(_)))
+      if(possibleCardToUse.isEmpty || this.game.table.allCard.isEmpty) {
         drop(findMaxValueCard(handCards.toVector))
       } else {
+        println()
         val cardWithHighestSubset = possibleCardToUse.zip(possibleCardToUse.map( findMaxElementsSubset(_) )).toVector
         val sum = (cardWithHighestSubset.map( card => card._1.handValue + card._2.length )).zip(cardWithHighestSubset).toMap
         val minSum = sum(sum.keys.min)

@@ -16,6 +16,7 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
   val cmpPlayers = new ComboBox(0 to 3)
   val nameCf = new Button("Confirm")
   val back = new Button("Back")
+  var nrCmp: Int = 0
 
 
   val titlePanel = new FlowPanel {
@@ -80,8 +81,8 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
       val source = b.source
       source match {
         case this.plrCf => {
-          val nrPlayers = cmpPlayers.item + humPlayers.item
           val nameInput = getName(humPlayers.item)
+          nrCmp = cmpPlayers.item
           mainPanel.contents.clear()
           mainPanel.contents += getName(humPlayers.item)
           this.repaint()

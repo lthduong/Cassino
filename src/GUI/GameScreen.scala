@@ -9,7 +9,9 @@ import src.Logic.Game
 
 class GameScreen(game: Game) extends Panel {
 
-
+  def paintCom(g: Graphics2D) = {
+    g.setColor(new Color(0, 153, 0))
+  }
 
   background = new Color(0, 153, 0)
 
