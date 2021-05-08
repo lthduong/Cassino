@@ -5,7 +5,7 @@ import scala.collection.mutable.Buffer
 
 case class Player(name: String, game: Game) {
 
-  //protected var score     = 0    // Might not be needed
+  protected var score     = 0    // Might not be needed
   protected var sweep     = 0
   protected var hidden    = false
   protected var handCards = Buffer[Card]()
@@ -13,7 +13,7 @@ case class Player(name: String, game: Game) {
 
 
   // These three used to get the var
-  //def getScore  = score       // Might not be needed
+  def getScore  = score       // Might not be needed
   def getSweep  = sweep
   def getHidden = hidden
   def hand   = handCards
@@ -23,13 +23,13 @@ case class Player(name: String, game: Game) {
   // These are used to update the var
   def updateHidden()             = { hidden = !hidden }
   def updateSweep()              = { sweep += 1       }
-  //def updateScore(newScore: Int) = { score = newScore }
+  def updateScore(newScore: Int) = { score = newScore }
   def addCardHand(card: Card)    = { handCards += card}
   def addCardPile(card: Card)    = { pileCards += card}
 
 
 
-  def capture(cardUse: Card, cardTake: Vector[Card]): Boolean = {
+  def capture(cardUse: Card, cardTake: Vector[Card]): Unit = {
     if(handCards.contains(cardUse) && game.validCapture(cardUse, cardTake)) {
       //cardTake.foreach( cardVector => pileCards ++= cardVector )
       pileCards ++= cardTake
@@ -40,9 +40,7 @@ case class Player(name: String, game: Game) {
       game.deal(this)
       game.lastCapturer = this
       game.advanceTurn()
-      true
     }
-    else false
   }
 
   def addCardManually(cardAdd: Buffer[Card]) = {
@@ -55,14 +53,13 @@ case class Player(name: String, game: Game) {
     //cardAdd.foreach( this.game.table.removeCard(_) )
   }
 
-  def drop(cardDrop: Card): Boolean = {
+  def drop(cardDrop: Card): Unit = {
     if(handCards.contains(cardDrop)) {
       game.table.addCard(cardDrop)
       handCards -= cardDrop
       game.deal(this)
       game.advanceTurn()
-      true
-    } else false
+    }
   }
 
   // Aulixiary methods to calculate score
@@ -101,7 +98,8 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     cardMap(cardMap.keys.max)
   }
 
-  def optimalMove(): Boolean = {
+  //TODO: Deal with if hand == 0
+  def optimalMove(): Unit = {
     val sweepCard = this.handCards.find( card => this.game.table.allCard.map( _.value ).sum % card.handValue == 0 )
     if(sweepCard.isDefined) capture(sweepCard.get, this.game.table.allCard.toVector)
     else {

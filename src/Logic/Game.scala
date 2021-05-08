@@ -81,6 +81,7 @@ class Game {
     val maxSpadeInTable = players.map( _.numberOfSpades ).max  // The highest number of spades in the hand of a player in the whole table
     if(player.hand.length == maxHandInTable) score += 1
     if(player.numberOfSpades == maxSpadeInTable) score += 2
+    player.updateScore(score)
     score
   }
 
