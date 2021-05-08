@@ -5,7 +5,7 @@ import scala.collection.mutable.Buffer
 
 case class Player(name: String, game: Game) {
 
-  protected var score     = 0    // Might not be needed
+  //protected var score     = 0    // Might not be needed
   protected var sweep     = 0
   protected var hidden    = false
   protected var handCards = Buffer[Card]()
@@ -13,7 +13,7 @@ case class Player(name: String, game: Game) {
 
 
   // These three used to get the var
-  def getScore  = score       // Might not be needed
+  //def getScore  = score       // Might not be needed
   def getSweep  = sweep
   def getHidden = hidden
   def hand   = handCards
@@ -23,7 +23,7 @@ case class Player(name: String, game: Game) {
   // These are used to update the var
   def updateHidden()             = { hidden = !hidden }
   def updateSweep()              = { sweep += 1       }
-  def updateScore(newScore: Int) = { score = newScore }
+  //def updateScore(newScore: Int) = { score = newScore }
   def addCardHand(card: Card)    = { handCards += card}
   def addCardPile(card: Card)    = { pileCards += card}
 
@@ -38,8 +38,14 @@ case class Player(name: String, game: Game) {
       handCards -= cardUse
       if(game.table.allCard.isEmpty) sweep += 1
       game.deal(this)
+      game.lastCapturer = this
       game.advanceTurn()
     }
+  }
+
+  def addCardManually(cardAdd: Buffer[Card]) = {
+    this.pile ++= cardAdd
+    cardAdd.foreach( this.game.table.removeCard(_) )
   }
 
   def drop(cardDrop: Card): Unit = {

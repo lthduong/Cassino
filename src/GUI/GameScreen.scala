@@ -7,8 +7,10 @@ import src.Logic.Game
 
 // This is the class acts as the game screen
 
-class GameScreen(game: Game) extends BoxPanel(Orientation.Vertical) {
+class GameScreen(game: Game) extends Panel {
 
-  def top = ???
+
+
+  background = new Color(0, 153, 0)
 
 }

@@ -19,7 +19,7 @@ object GameTest extends App {
   println("Turn player: " + game.playerTurn)
 
   // Deal cards to table and check
-  for(n <- 1 to 10) game.shuffle
+  for(n <- 1 to 10) game.shuffle()
   for(n <- 1 to 16) game.dealTable()
   println("Table Card: " + game.table.allCard)
 
@@ -55,5 +55,7 @@ object GameTest extends App {
   println("Table Card: " + game.table.allCard)
   println("Cmp hand: " + cmpPlayer.hand)
   println("Cmp pile: " + cmpPlayer.pile)
+
+  game.winners.foreach( winner => println( winner + "\n" ) )
 
 }
