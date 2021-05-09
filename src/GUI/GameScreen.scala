@@ -1,6 +1,7 @@
 package src.GUI
 
 import scala.swing._
+import scala.swing.event._
 import java.awt.Color
 import src.Logic._
 import javax.imageio.ImageIO
@@ -15,6 +16,15 @@ class GameScreen(game: Game) extends Panel {
   var winner: String = ""
   var cardSelected = Vector[Card]()
   var cardUsed: Option[Card] = None
+
+  // Used to draw a selection highlight
+  def drawSelection(g: Graphics2D, x: Int, y: Int, width: Int, length: Int) = {
+    g.setColor(new Color(216, 8, 8))
+    g.drawLine(x        , y         , x + width, y         )
+    g.drawLine(x        , y         , x        , y + length)
+    g.drawLine(x + width, y + length, x + width, y         )
+    g.drawLine(x + width, y + length, x        , y + length)
+  }
 
   def paintCom(g: Graphics2D) = {
     // Draw background
@@ -32,6 +42,7 @@ class GameScreen(game: Game) extends Panel {
       val cardImage = game.table.allCard(i).image.getScaledInstance(95, 145, 76)
       val yCoord = if(i < 7) 80 else 250
       g.drawImage(cardImage, 120 + 140 * (i % 7), yCoord, null)
+      if(cardSelected.contains(game.table.allCard(i))) drawSelection(g, 120 + 140 * (i % 7), yCoord, 95, 145)
     }
     /* } else {
       g.setFont(new Font("Arial", 0, 30))
@@ -79,6 +90,31 @@ class GameScreen(game: Game) extends Panel {
 
   override def paintComponent(g: Graphics2D) = {
     paintCom(g)
+  }
+
+  this.listenTo(this.mouse.clicks)
+  this.reactions += {
+    case e: MousePressed =>
+      // Pile button is clicked
+      if(e.point.x >= 700 && e.point.y >= 495 && e.point.x <= 750 && e.point.y <= 545) {
+        Dialog.showMessage(this, "Cards in pile: " + game.playerTurn.pile.map( _.toString ).mkString(", "), "Pile cards")
+        this.repaint()
+        this.revalidate()
+      }
+
+      // Drop button is clicked
+      if(e.point.x >= 875 && e.point.y >= 495 && e.point.x <= 925 && e.point.y <= 545) {
+        Dialog.showMessage(this, "This button is reserved for drop method")
+        this.repaint()
+        this.revalidate()
+      }
+
+      // Capture button is clicked
+      if(e.point.x >= 875 && e.point.y >= 430 && e.point.x <= 925 && e.point.y <= 480) {
+        Dialog.showMessage(this, "This button is reserved for capture method")
+        this.repaint()
+        this.revalidate()
+      }
   }
 
   this.revalidate()
