@@ -36,7 +36,7 @@ object InstructionScreen extends SimpleSwingApplication {
     contents += new FlowPanel {
       contents += instructionTitle
       override def paintComponent(g: Graphics2D) = {
-        val image = ImageIO.read(new File("./Image/Others/instruction.png")).getScaledInstance(52, 52, 55)
+        val image = ImageIO.read(new File("./images/other/instruction.png")).getScaledInstance(52, 52, 55)
         g.drawImage(image, 490, 3, null)
       }
     }

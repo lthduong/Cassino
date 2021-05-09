@@ -22,7 +22,7 @@ object GUITest extends SimpleSwingApplication {
   players.foreach( game.addPlayer(_) )
   game.shuffle()
   players.foreach( game.deal(_) )
-  (1 to 10).foreach( i => game.dealTable() )
+  (1 to 4).foreach( i => game.dealTable() )
 
   val screen = new GameScreen(game)
 

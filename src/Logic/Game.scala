@@ -28,8 +28,9 @@ class Game {
   def playersList = players
   def getTurn     = turn
   def playerTurn  = players(turn % players.length)
+  def getDeck     = this.deck
   def isOver      = players.forall( _.hand.isEmpty && deck.isEmpty )
-  def winners = {
+  def winners     = {
     val playerByScore = players.map( calculateScore(_) ).zip(players).groupBy( _._1 )
     playerByScore(playerByScore.keys.max).map( _._2 )
   }
