@@ -23,7 +23,7 @@ class IOHandler {
       fileContent += "Name: " + player.name
       fileContent += "Hand:"  + player.hand.map( _.toString ).mkString("")
       fileContent += "Pile:"  + player.pile.map( _.toString ).mkString("")
-      //fileContent += "Score:" + player.getScore
+      fileContent += "Score:" + player.getScore
     }
 
     // Adding turn info
@@ -162,7 +162,7 @@ class IOHandler {
         }
         addCardToHand(handCards, newPlayer)
         addCardToPile(pileCards, newPlayer)
-        //newPlayer.updateScore(score.toInt)
+        newPlayer.updateScore(score.toInt)
         game.addPlayer(newPlayer)
       }
 

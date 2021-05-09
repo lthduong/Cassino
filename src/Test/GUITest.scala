@@ -18,7 +18,11 @@ object GUITest extends SimpleSwingApplication {
   val cmpPlayer2 = new ComputerPlayer("Cmp2", game)
   val cmpPlayer3 = new ComputerPlayer("Cmp3", game)
 
-  Vector(player1, player2, player3, player4, player5, player6, cmpPlayer1, cmpPlayer2, cmpPlayer3).foreach( game.addPlayer(_) )
+  val players = Vector(player1, player2, player3, player4, player5, player6, cmpPlayer1, cmpPlayer2, cmpPlayer3)
+  players.foreach( game.addPlayer(_) )
+  game.shuffle()
+  players.foreach( game.deal(_) )
+  (1 to 10).foreach( i => game.dealTable() )
 
   val screen = new GameScreen(game)
 
