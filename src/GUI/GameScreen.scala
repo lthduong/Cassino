@@ -2,11 +2,10 @@ package src.GUI
 
 import scala.swing._
 import scala.swing.event._
-import java.awt.Color
+import java.awt.{BasicStroke, Color, Font}
 import src.Logic._
 import javax.imageio.ImageIO
 import java.io._
-import java.awt.Font
 
 
 // This is the class acts as the game screen
@@ -19,6 +18,7 @@ class GameScreen(game: Game) extends Panel {
 
   // Used to draw a selection highlight
   def drawSelection(g: Graphics2D, x: Int, y: Int, width: Int, length: Int) = {
+    g.setStroke(new BasicStroke(3))
     g.setColor(new Color(216, 8, 8))
     g.drawLine(x        , y         , x + width, y         )
     g.drawLine(x        , y         , x        , y + length)
@@ -67,8 +67,10 @@ class GameScreen(game: Game) extends Panel {
         else game.playerTurn.hand(i).image.getScaledInstance(75, 115, 76)
       }
       g.drawImage(cardImage, 150 + 140 * i, 430, null)
+      if(cardUsed.contains(game.playerTurn.hand(i))) drawSelection(g, 150 + 140 * i, 430, 75, 115)
     }
     // Draw scoreboard
+    g.setColor(new Color(0,0,0))
     g.drawString("Score:", 18, 625)
     g.setColor(new Color(0, 12, 175))
     for(i <- game.playersList.indices) {
@@ -102,6 +104,7 @@ class GameScreen(game: Game) extends Panel {
         this.revalidate()
       }
 
+      // TODO: Change this to an appropriate reaction
       // Drop button is clicked
       if(e.point.x >= 875 && e.point.y >= 495 && e.point.x <= 925 && e.point.y <= 545) {
         Dialog.showMessage(this, "This button is reserved for drop method")
@@ -109,9 +112,35 @@ class GameScreen(game: Game) extends Panel {
         this.revalidate()
       }
 
+      // TODO: Change this to an appropriate reaction
       // Capture button is clicked
       if(e.point.x >= 875 && e.point.y >= 430 && e.point.x <= 925 && e.point.y <= 480) {
         Dialog.showMessage(this, "This button is reserved for capture method")
+        this.repaint()
+        this.revalidate()
+      }
+
+      // If a card on hand is select
+      if(e.point.x >= 150 && e.point.y >= 430 && e.point.x <= 225 && e.point.y <= 545) {
+        cardUsed = Some(game.playerTurn.hand(0))
+        this.repaint()
+        this.revalidate()
+      }
+
+      if(e.point.x >= 290 && e.point.y >= 430 && e.point.x <= 365 && e.point.y <= 545) {
+        cardUsed = Some(game.playerTurn.hand(1))
+        this.repaint()
+        this.revalidate()
+      }
+
+      if(e.point.x >= 430 && e.point.y >= 430 && e.point.x <= 505 && e.point.y <= 545) {
+        cardUsed = Some(game.playerTurn.hand(2))
+        this.repaint()
+        this.revalidate()
+      }
+
+      if(e.point.x >= 570 && e.point.y >= 430 && e.point.x <= 645 && e.point.y <= 545) {
+        cardUsed = Some(game.playerTurn.hand(3))
         this.repaint()
         this.revalidate()
       }
