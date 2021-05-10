@@ -6,10 +6,10 @@ import java.io.{BufferedReader, BufferedWriter, FileNotFoundException, FileReade
 
 class IOHandler {
 
-  def saveGame(filePath: String, game: Game) = {
+  def saveGame(filePath: String) = {
 
     var fileContent = Buffer[String]()
-    val players = game.playersList
+    val players = Game.playersList
 
     // Adding title and game metadata to the file content
     fileContent += "Casino save ver 1.0"
@@ -28,8 +28,8 @@ class IOHandler {
 
     // Adding turn info
     fileContent += "#Turn"
-    fileContent += "Turn: "  + game.getTurn
-    fileContent += "Table: " + game.table.allCard.map( _.toString ).mkString("")
+    fileContent += "Turn: "  + Game.getTurn
+    fileContent += "Table: " + Game.table.allCard.map( _.toString ).mkString("")
 
     fileContent += "#END"
 
@@ -50,9 +50,7 @@ class IOHandler {
 
 
 
-  def loadGame(filePath: String): Game = {
-
-    val game = new Game
+  def loadGame(filePath: String) = {
 
     val fileReader = new FileReader(filePath)
     val lineReader = new BufferedReader(fileReader)
@@ -149,27 +147,27 @@ class IOHandler {
       }
 
       // Adding players to the game
-      def addPlayerToGame(playerInfo: Buffer[String], game: Game) = {
+      def addPlayerToGame(playerInfo: Buffer[String]) = {
         val cmp = playerInfo.head.drop(playerInfo.head.indexOf(':') + 1).trim.toLowerCase  // Checking if this player is a computer player or not
         val name = playerInfo(1).drop(playerInfo(1).indexOf(':') + 1).trim
         val handCards = playerInfo(2).drop(playerInfo(2).indexOf(':') + 1).trim
         val pileCards = playerInfo(3).drop(playerInfo(3).indexOf(':') + 1).trim
         val score = playerInfo(4).drop(playerInfo(4).indexOf(':') + 1).trim
         val newPlayer = {
-          if(cmp == "false") new Player(name, game)
-          else if(cmp == "true") new ComputerPlayer(name, game)
+          if(cmp == "false") new Player(name)
+          else if(cmp == "true") new ComputerPlayer(name)
           else throw new CorruptedCassinoFIleException("Something is wrong with the player infomation")
         }
         addCardToHand(handCards, newPlayer)
         addCardToPile(pileCards, newPlayer)
         newPlayer.updateScore(score.toInt)
-        game.addPlayer(newPlayer)
+        Game.addPlayer(newPlayer)
       }
 
 
       for(n <- 1 to numberOfPlayers) {
         val thisPlayer = playerBuffer.head +: playerBuffer.drop(1).takeWhile( !_.startsWith("*") )
-        addPlayerToGame(thisPlayer, game)
+        addPlayerToGame(thisPlayer)
         playerBuffer = playerBuffer.drop(thisPlayer.size)
       }
 
@@ -177,27 +175,25 @@ class IOHandler {
       // Setting the turn information
 
       // Helper method to add card to table
-      def addCardToTable(cardString: String, game: Game): Unit = {
+      def addCardToTable(cardString: String): Unit = {
         var tableString = cardString.toLowerCase
         while(tableString.nonEmpty) {
           val cardInfo = tableString.take(2)
           val card = new Card(cardInfo(0).toString, cardInfo(2).toString)
-          game.table.addCard(card)
+          Game.table.addCard(card)
           cardsNotInDeck += card
           tableString = tableString.drop(2)
         }
       }
 
       val turn = turnBuffer(0).drop(turnBuffer(0).indexOf(':') + 1).trim
-      game.setTurn(turn.toInt)                                                 // Set up turn
+      Game.setTurn(turn.toInt)                                                 // Set up turn
 
       val tableCard = turnBuffer(1).drop(turnBuffer(1).indexOf(':') + 1).trim
-      addCardToTable(tableCard, game)                                          // Set up table
+      addCardToTable(tableCard)                                                // Set up table
 
-      cardsNotInDeck.foreach( card => game.removeFromDeck(card) )              // Remove the cards taht are not in the deck from the deck
+      cardsNotInDeck.foreach( card => Game.removeFromDeck(card) )              // Remove the cards taht are not in the deck from the deck
 
-      // Return the game object created
-      game
 
     } catch {
       case e: FileNotFoundException =>

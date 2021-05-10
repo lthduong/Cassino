@@ -4,7 +4,7 @@ import scala.collection.mutable.Buffer
 import scala.util.Random
 import src.Logic.IOHandler
 
-class Game {
+object Game {
 
   val table = new Table
   val handler = new IOHandler
@@ -70,12 +70,6 @@ class Game {
     deck -= deck.head
   }
 
-  def playAgain: Game = {
-    val ng = new Game
-    players.foreach(ng.addPlayer)
-    ng
-  }
-
   def calculateScore(player: Player): Int = {
     var score = player.rawScore
     val maxPile = players.map( _.pile.length ).max      // The highest number of card in the hand of a player in the whole table
@@ -84,6 +78,15 @@ class Game {
     if(player.numberOfSpades == maxSpadeInTable) score += 2
     player.updateScore(score)
     score
+  }
+
+  def newGame(cmpPlayer: Int, player: Vector[Player]): Unit = {
+    players = player.toBuffer
+    for(i <- 1 to cmpPlayer) {
+      this.addPlayer( new ComputerPlayer("Cmp" + i) )
+    }
+    this.playersList.foreach( deal(_) )
+    (1 to 4).foreach( i => this.dealTable() )
   }
 
 }

@@ -12,10 +12,29 @@ object CassinoApp extends SimpleSwingApplication {
   val game = new Menu("Game") { contents ++= Vector(save, load) }
   val help = new Menu("Help") { contents += ins }
   val menu = new MenuBar { contents ++= Vector(game, help) }
-  val newGame = new GameScreen(new Game)
+
   val content: Panel = new BoxPanel(Orientation.Vertical) {
     contents += FirstScreen
-    contents += newGame
+    this.listenTo(ins)
+    this.listenTo(FirstScreen.nameCf)
+    this.reactions += {
+      case b: ButtonClicked => {
+        val source = b.source
+        source match {
+          case ins => InstructionScreen.top.visible = true
+         /* case FirstScreen.nameCf => {
+            val game = new Game
+            val nrHuman = FirstScreen.humPlayers.item
+            val nrCmp = FirstScreen.cmpPlayers.item
+            val names = FirstScreen.namePanels.map( _.text )
+            val players = names.map( name => new Player(name, game) )
+            contents.clear()
+
+          } */
+        }
+      }
+    }
+
   }
 
   def top = new MainFrame {
@@ -25,36 +44,5 @@ object CassinoApp extends SimpleSwingApplication {
     menuBar = menu
   }
 
-  this.listenTo(ins)
-  this.listenTo(FirstScreen.nameCf)
-  this.reactions += {
-    case b: ButtonClicked => {
-      val source = b.source
-      source match {
-        case this.ins => InstructionScreen.top.visible = true
-        case FirstScreen.nameCf => {
-          val game = new Game
-          val nrHuman = FirstScreen.humPlayers.item
-          val nrCmp = FirstScreen.cmpPlayers.item
-          val names = FirstScreen.namePanels.map( _.text )
-          if(names.toList.length != names.length) {
-            Dialog.showMessage(content, "Please provide enough and distinct names for the players")
-          } else {
-            for(i <- names.indices) {
-              val plr = new Player(names(i), game)
-              newGame.game.addPlayer(plr)
-            }
-          }
-          for(i <- 1 to nrCmp) {
-            val cmp = new ComputerPlayer("Cmp" + i, game)
-            newGame.game.addPlayer(cmp)
-          }
-          FirstScreen.visible = false
-          content.revalidate()
-          content.repaint()
-        }
-      }
-    }
-  }
 
 }

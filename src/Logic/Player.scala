@@ -3,7 +3,7 @@ package src.Logic
 import scala.collection.mutable.Buffer
 
 
-case class Player(name: String, game: Game) {
+case class Player(name: String) {
 
   protected var score     = 0
   protected var sweep     = 0
@@ -33,16 +33,16 @@ case class Player(name: String, game: Game) {
     //cardTake.foreach( cardVector => pileCards ++= cardVector )
     pileCards ++= cardTake
     pileCards += cardUse
-    cardTake.foreach( this.game.table.removeCard(_) )
+    cardTake.foreach( Game.table.removeCard(_) )
     handCards -= cardUse
-    if(game.table.allCard.isEmpty) sweep += 1
-    game.deal(this)
-    game.lastCapturer = Some(this)
+    if(Game.table.allCard.isEmpty) sweep += 1
+    Game.deal(this)
+    Game.lastCapturer = Some(this)
   }
 
   def addCardManually(cardAdd: Vector[Card]) = {
     this.pile ++= cardAdd.toBuffer
-    cardAdd.foreach( this.game.table.removeCard(_) )
+    cardAdd.foreach( Game.table.removeCard(_) )
   }
 
   def addHandManually(cardAdd: Buffer[Card]) = {
@@ -51,9 +51,9 @@ case class Player(name: String, game: Game) {
   }
 
   def drop(cardDrop: Card): Unit = {
-    game.table.addCard(cardDrop)
+    Game.table.addCard(cardDrop)
     handCards -= cardDrop
-    game.deal(this)
+    Game.deal(this)
   }
 
   // Aulixiary methods to calculate score
@@ -71,14 +71,14 @@ case class Player(name: String, game: Game) {
 }
 
 
-class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
+class ComputerPlayer(name: String) extends Player(name) {
 
 
   def findCards(cardUsed: Card): Vector[Vector[Card]] = {
-    val allCombos = game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
+    val allCombos = Game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
     val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue ).toVector.map( subset => subset.toVector )
     val comboCombination = possibleCombos.toSet.subsets.toVector.map( subset => subset.toVector.map( _.toVector ) )
-    comboCombination.filter( setOfCombos => this.game.validCapture(cardUsed, setOfCombos.flatten) ).map( _.flatten )
+    comboCombination.filter( setOfCombos => Game.validCapture(cardUsed, setOfCombos.flatten) ).map( _.flatten )
   }
 
 
@@ -94,19 +94,19 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
   }
 
   def optimalMove(): Unit = {
-    val sweepCard = this.handCards.find( card => this.game.table.allCard.map( _.value ).sum % card.handValue == 0 )
-    if(sweepCard.isDefined) capture(sweepCard.get, this.game.table.allCard.toVector)
+    val sweepCard = this.handCards.find( card => Game.table.allCard.map( _.value ).sum % card.handValue == 0 )
+    if(sweepCard.isDefined) capture(sweepCard.get, Game.table.allCard.toVector)
     else {
       val possibleCardToUse = {
-        if(this.game.table.allCard.length > 9) handCards.filter( _.handValue < 13 ).filter( findCards(_).nonEmpty )
+        if(Game.table.allCard.length > 9) handCards.filter( _.handValue < 13 ).filter( findCards(_).nonEmpty )
         //else if(this.game.table.allCard.length > 14) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
         //else if(this.game.table.allCard.length > 16) handCards.filter( _.handValue < 6 ).filter( findCards(_).nonEmpty )
-        else if(this.game.table.allCard.length > 11) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
+        else if(Game.table.allCard.length > 11) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
         else handCards.filter( findCards(_).nonEmpty )
       }
       println(possibleCardToUse)
       println(possibleCardToUse.map( findCards(_)))
-      if(possibleCardToUse.isEmpty || this.game.table.allCard.isEmpty) {
+      if(possibleCardToUse.isEmpty || Game.table.allCard.isEmpty) {
         drop(findMaxValueCard(handCards.toVector))
       } else {
         println()

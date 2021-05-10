@@ -10,18 +10,18 @@ import java.io._
 
 // This is the class acts as the game screen
 
-case class GameScreen(game: Game) extends Panel {
+object GameScreen extends Panel {
 
   var cardSelected = Vector[Card]()
   var cardUsed: Option[Card] = None
   var turnChange = false
 
   def endGame() = {
-    if(game.lastCapturer.isDefined && game.table.allCard.nonEmpty) {
-      game.lastCapturer.get.addHandManually(game.table.allCard)
-      game.table.allCard.foreach( game.table.removeCard(_) )
+    if(Game.lastCapturer.isDefined && Game.table.allCard.nonEmpty) {
+      Game.lastCapturer.get.addHandManually(Game.table.allCard)
+      Game.table.allCard.foreach( Game.table.removeCard(_) )
     }
-    game.playersList.foreach( game.calculateScore(_) )
+    Game.playersList.foreach( Game.calculateScore(_) )
     this.repaint()
     this.revalidate()
   }
@@ -40,20 +40,20 @@ case class GameScreen(game: Game) extends Panel {
     g.setColor(new Color(0, 153, 0))
     g.fillRect(0, 0, 1200, 750)
 
-    if(!game.isOver && !turnChange) {
+    if(!Game.isOver && !turnChange) {
       // Draw turn
       g.setColor(new Color(0, 0, 0))
       g.setFont(new Font("Arial", java.awt.Font.BOLD, 45))
-      g.drawString(game.playerTurn.name + "'s turn", 18, 55)
+      g.drawString(Game.playerTurn.name + "'s turn", 18, 55)
       // Draw table for the turn
       // If the number of cards on table <= 14, it will be displayed in image
       // If the number of cards on table > 14, it will be displayed by text
       // if(game.table.allCard.length <= 14) {
-      for(i <- game.table.allCard.indices) {
-        val cardImage = game.table.allCard(i).image.getScaledInstance(95, 145, 76)
+      for(i <- Game.table.allCard.indices) {
+        val cardImage = Game.table.allCard(i).image.getScaledInstance(95, 145, 76)
         val yCoord = if(i < 7) 80 else 250
         g.drawImage(cardImage, 120 + 140 * (i % 7), yCoord, null)
-        if(cardSelected.contains(game.table.allCard(i))) {
+        if(cardSelected.contains(Game.table.allCard(i))) {
            g.setColor(new Color(0, 213, 255))
           drawSelection(g, 120 + 140 * (i % 7), yCoord, 95, 145)
         }
@@ -62,13 +62,13 @@ case class GameScreen(game: Game) extends Panel {
       g.setColor(new Color(0, 0, 0))
       g.setFont(new Font("Arial", 0, 30))
       g.drawString("Hand:", 18, 500)
-      for(i <- game.playerTurn.hand.indices) {
+      for(i <- Game.playerTurn.hand.indices) {
         val cardImage = {
-          if(game.playerTurn.isInstanceOf[ComputerPlayer]) ImageIO.read(new File("./images/cards/back.png")).getScaledInstance(75, 115, 76)
-          else game.playerTurn.hand(i).image.getScaledInstance(75, 115, 76)
+          if(Game.playerTurn.isInstanceOf[ComputerPlayer]) ImageIO.read(new File("./images/cards/back.png")).getScaledInstance(75, 115, 76)
+          else Game.playerTurn.hand(i).image.getScaledInstance(75, 115, 76)
         }
         g.drawImage(cardImage, 150 + 140 * i, 430, null)
-        if(cardUsed.contains(game.playerTurn.hand(i))) {
+        if(cardUsed.contains(Game.playerTurn.hand(i))) {
           g.setColor(new Color(216, 8, 8))
           drawSelection(g, 150 + 140 * i, 430, 75, 115)
         }
@@ -77,9 +77,9 @@ case class GameScreen(game: Game) extends Panel {
       g.setColor(new Color(0,0,0))
       g.drawString("Score:", 18, 625)
       g.setColor(new Color(0, 12, 175))
-      for(i <- game.playersList.indices) {
-        val yCoord = if(game.playersList(i).isInstanceOf[ComputerPlayer]) 680 else 625
-        g.drawString(game.playersList(i).name + ": " + game.playersList(i).getScore, 150 + 165 * (i % 6), yCoord)
+      for(i <- Game.playersList.indices) {
+        val yCoord = if(Game.playersList(i).isInstanceOf[ComputerPlayer]) 680 else 625
+        g.drawString(Game.playersList(i).name + ": " + Game.playersList(i).getScore, 150 + 165 * (i % 6), yCoord)
       }
       // Draw capture and drop buttons
       g.setColor(new Color(247, 255, 0))
@@ -92,22 +92,22 @@ case class GameScreen(game: Game) extends Panel {
       g.drawString("Capture", 935, 465)
       g.drawString("Drop", 935, 530)
       g.drawString("Pile", 760, 530)
-    } else if(!game.isOver && turnChange) {
+    } else if(!Game.isOver && turnChange) {
       g.setColor(new Color(0, 0, 0))
       g.setFont(new Font("Arial", 0, 40))
-      g.drawString("Move to " + game.playerTurn.name + "'s turn", 150, 290)
+      g.drawString("Move to " + Game.playerTurn.name + "'s turn", 150, 290)
       g.setFont(new Font("Arial", 0, 20))
       g.drawString("Press the screen to continue", 150, 340)
     } else {
       endGame()
-      for(i <- game.playersList.indices) {
+      for(i <- Game.playersList.indices) {
         g.setFont(new Font("Arial", 0, 45))
         g.setColor(new Color(247, 255, 0))
         g.drawString("Game over! Here are the scores:", 250, 150)
-        if(game.winners.contains(game.playersList(i))) g.setColor(new Color(216, 8, 8))
+        if(Game.winners.contains(Game.playersList(i))) g.setColor(new Color(216, 8, 8))
         else g.setColor(new Color(0, 0, 0))
         g.setFont(new Font("Arial", 0, 30))
-        g.drawString(game.playersList(i) + ": " + game.playersList(i).getScore, 495, 200 + 50 * i)
+        g.drawString(Game.playersList(i) + ": " + Game.playersList(i).getScore, 495, 200 + 50 * i)
       }
     }
   }
@@ -129,7 +129,7 @@ case class GameScreen(game: Game) extends Panel {
 
       // Pile button is clicked
       if(e.point.x >= 700 && e.point.y >= 495 && e.point.x <= 750 && e.point.y <= 545) {
-        Dialog.showMessage(this, "Cards in pile: " + game.playerTurn.pile.map( _.toString ).mkString(", "), "Pile cards")
+        Dialog.showMessage(this, "Cards in pile: " + Game.playerTurn.pile.map( _.toString ).mkString(", "), "Pile cards")
         this.repaint()
         this.revalidate()
       }
@@ -137,8 +137,8 @@ case class GameScreen(game: Game) extends Panel {
       // Drop button is clicked
       if(e.point.x >= 875 && e.point.y >= 495 && e.point.x <= 925 && e.point.y <= 545) {
         if(cardUsed.isDefined) {
-          game.playerTurn.drop(cardUsed.get)
-          game.advanceTurn()
+          Game.playerTurn.drop(cardUsed.get)
+          Game.advanceTurn()
           turnChange = true
         } else {
           Dialog.showMessage(this, "Choose a card to drop.", "Action failed.")
@@ -150,9 +150,9 @@ case class GameScreen(game: Game) extends Panel {
       // Capture button is clicked
       if(e.point.x >= 875 && e.point.y >= 430 && e.point.x <= 925 && e.point.y <= 480) {
         if(cardUsed.isDefined && cardSelected.nonEmpty) {
-          if(game.validCapture(cardUsed.get, cardSelected)) {
-            game.playerTurn.capture(cardUsed.get, cardSelected)
-            game.advanceTurn()
+          if(Game.validCapture(cardUsed.get, cardSelected)) {
+            Game.playerTurn.capture(cardUsed.get, cardSelected)
+            Game.advanceTurn()
             turnChange = true
           } else {
             cardSelected = Vector[Card]()
@@ -171,8 +171,8 @@ case class GameScreen(game: Game) extends Panel {
         val xCoord = 150 + 140 * i
         val yCoord = 430
         if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 75 && e.point.y <= yCoord + 115) {
-          if(game.playerTurn.hand.isDefinedAt(i)) {
-            cardUsed = Some(game.playerTurn.hand(i))
+          if(Game.playerTurn.hand.isDefinedAt(i)) {
+            cardUsed = Some(Game.playerTurn.hand(i))
              this.repaint()
              this.revalidate()
           }
@@ -184,8 +184,8 @@ case class GameScreen(game: Game) extends Panel {
         val xCoord = 120 + 140 * (i % 7)
         val yCoord = if(i < 7) 80 else 250
         if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 95 && e.point.y <= yCoord + 145) {
-          if(game.table.allCard.isDefinedAt(i)) {
-            cardSelected = cardSelected :+ game.table.allCard(i)
+          if(Game.table.allCard.isDefinedAt(i)) {
+            cardSelected = cardSelected :+ Game.table.allCard(i)
              this.repaint()
              this.revalidate()
           }

@@ -6,31 +6,31 @@ import scala.collection.mutable.Buffer
 
 object GameTest extends App {
 
-  val game = new Game
-  val table = game.table
 
-  val player1 = new Player("P1", game)
-  val player2 = new Player("P2", game)
-  val player3 = new Player("P3", game)
-  val cmpPlayer = new ComputerPlayer("CMP1", game)
+  val table = Game.table
+
+  val player1 = new Player("P1")
+  val player2 = new Player("P2")
+  val player3 = new Player("P3")
+  val cmpPlayer = new ComputerPlayer("CMP1")
   val allPlayers = Vector(player1, player2, player3, cmpPlayer)
 
-  allPlayers.foreach( player => game.addPlayer(player) )
+  allPlayers.foreach( player => Game.addPlayer(player) )
 
   //Get turn
-  println("Turn player: " + game.playerTurn)
+  println("Turn player: " + Game.playerTurn)
 
   /* Values for situational test
   val c1 = new Card("j", "c")
   val c2 = new Card("j", "h")
   val c3 = new Card("1", "c")
   val c4 = new Card("2", "h")
-  Vector(c1, c2, c3, c4).foreach( game.removeFromDeck(_) )
+  Vector(c1, c2, c3, c4).foreach( Game.removeFromDeck(_) )
   */
 
   // Deal cards to table and check
-  for(n <- 1 to 10) game.shuffle()
-  for(n <- 1 to 12) game.dealTable()
+  for(n <- 1 to 10) Game.shuffle()
+  for(n <- 1 to 12) Game.dealTable()
 
 
   /* Values for situational test
@@ -46,11 +46,11 @@ object GameTest extends App {
   val tb10 = new Card("q", "d")
   val tb11 = new Card("0", "h")
   val tb12 = new Card("4", "h")
-  Vector(tb1, tb2, tb3, tb4, tb5, tb6, tb7, tb8, tb9, tb10, tb11, tb12).foreach( game.table.addCard(_) )
+  Vector(tb1, tb2, tb3, tb4, tb5, tb6, tb7, tb8, tb9, tb10, tb11, tb12).foreach( Game.table.addCard(_) )
   */
 
 
-  println("Table Card: " + game.table.allCard)
+  println("Table Card: " + Game.table.allCard)
 
 
   // Checking validTrade:
@@ -64,8 +64,8 @@ object GameTest extends App {
   //println(valid)
 
   // Deal cards to players and check
-  game.playersList.foreach( player => game.deal(player) )
-  game.playersList.foreach( player => println(player.name + " hand: " + player.hand) )
+  Game.playersList.foreach( player => Game.deal(player) )
+  Game.playersList.foreach( player => println(player.name + " hand: " + player.hand) )
 
   // Checking findCards
   //println(cmpPlayer.findCards(new Card("6", "d")))
@@ -82,11 +82,11 @@ object GameTest extends App {
   // Checking optimalMove
   //cmpPlayer.addHandManually(Buffer(c1, c2, c3, c4))
   cmpPlayer.optimalMove()
-  println("Turn: " + game.playerTurn)
-  println("Table Card: " + game.table.allCard)
+  println("Turn: " + Game.playerTurn)
+  println("Table Card: " + Game.table.allCard)
   println("Cmp hand: " + cmpPlayer.hand)
   println("Cmp pile: " + cmpPlayer.pile)
 
-  game.winners.foreach( winner => println( winner + "\n" ) )
+  Game.winners.foreach( winner => println( winner + "\n" ) )
 
 }
