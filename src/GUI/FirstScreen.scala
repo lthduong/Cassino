@@ -17,6 +17,7 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
   val nameCf = new Button("Confirm")
   val back = new Button("Back")
   var nrCmp: Int = 0
+  var namePanels = Vector[TextField]()
 
 
   val titlePanel = new FlowPanel {
@@ -55,8 +56,9 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
     val namePrompt = new BoxPanel(Orientation.Vertical) {
       for( i <- 1 to number ) {
         val namePanel = new FlowPanel {
+          namePanels = namePanels :+ new TextField(10)
           contents += new Label("Input player's name:")
-          contents += new TextField(10)
+          contents += namePanels(i - 1)
           background = new Color(0, 153, 0)
         }
         contents += namePanel

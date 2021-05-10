@@ -10,7 +10,7 @@ import java.io._
 
 // This is the class acts as the game screen
 
-class GameScreen(game: Game) extends Panel {
+case class GameScreen(game: Game) extends Panel {
 
   var cardSelected = Vector[Card]()
   var cardUsed: Option[Card] = None
