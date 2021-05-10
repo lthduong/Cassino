@@ -12,6 +12,8 @@ import java.io._
 
 object GameScreen extends Panel {
 
+  visible = false
+
   var cardSelected = Vector[Card]()
   var cardUsed: Option[Card] = None
   var turnChange = false
@@ -92,12 +94,14 @@ object GameScreen extends Panel {
       g.drawString("Capture", 935, 465)
       g.drawString("Drop", 935, 530)
       g.drawString("Pile", 760, 530)
+    // When a player's turn end
     } else if(!Game.isOver && turnChange) {
       g.setColor(new Color(0, 0, 0))
       g.setFont(new Font("Arial", 0, 40))
       g.drawString("Move to " + Game.playerTurn.name + "'s turn", 150, 290)
       g.setFont(new Font("Arial", 0, 20))
       g.drawString("Press the screen to continue", 150, 340)
+    // When the game is over
     } else {
       endGame()
       for(i <- Game.playersList.indices) {

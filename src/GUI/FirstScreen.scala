@@ -3,8 +3,6 @@ package src.GUI
 import scala.swing._
 import scala.swing.event._
 import java.awt.Color
-import javax.imageio.ImageIO
-import java.io.File
 
 object FirstScreen extends BoxPanel(Orientation.Vertical) {
 
@@ -86,7 +84,7 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
           val nameInput = getName(humPlayers.item)
           nrCmp = cmpPlayers.item
           mainPanel.contents.clear()
-          mainPanel.contents += getName(humPlayers.item)
+          mainPanel.contents += nameInput
           this.repaint()
           this.revalidate()
         }

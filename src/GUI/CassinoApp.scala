@@ -15,22 +15,23 @@ object CassinoApp extends SimpleSwingApplication {
 
   val content: Panel = new BoxPanel(Orientation.Vertical) {
     contents += FirstScreen
-    this.listenTo(ins)
+    contents += GameScreen
     this.listenTo(FirstScreen.nameCf)
     this.reactions += {
       case b: ButtonClicked => {
         val source = b.source
         source match {
-          case ins => InstructionScreen.top.visible = true
-         /* case FirstScreen.nameCf => {
-            val game = new Game
+          case FirstScreen.nameCf => {
             val nrHuman = FirstScreen.humPlayers.item
             val nrCmp = FirstScreen.cmpPlayers.item
             val names = FirstScreen.namePanels.map( _.text )
-            val players = names.map( name => new Player(name, game) )
-            contents.clear()
-
-          } */
+            val players = names.map( name => new Player(name) )
+            Game.newGame(nrCmp, players)
+            FirstScreen.visible = false
+            GameScreen.visible = true
+            GameScreen.revalidate()
+            GameScreen.repaint()
+          }
         }
       }
     }
@@ -42,6 +43,16 @@ object CassinoApp extends SimpleSwingApplication {
     size = new Dimension(1200, 750)
     resizable = false
     menuBar = menu
+  }
+
+  this.listenTo(ins)
+  this.reactions += {
+    case b: ButtonClicked => {
+      val source = b.source
+      source match {
+        case ins => InstructionScreen.top.visible = true
+      }
+    }
   }
 
 
