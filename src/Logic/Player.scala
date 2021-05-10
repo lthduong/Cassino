@@ -30,17 +30,15 @@ case class Player(name: String, game: Game) {
 
 
   def capture(cardUse: Card, cardTake: Vector[Card]): Unit = {
-    if(handCards.contains(cardUse) && game.validCapture(cardUse, cardTake)) {
-      //cardTake.foreach( cardVector => pileCards ++= cardVector )
-      pileCards ++= cardTake
-      pileCards += cardUse
-      cardTake.foreach( this.game.table.removeCard(_) )
-      handCards -= cardUse
-      if(game.table.allCard.isEmpty) sweep += 1
-      game.deal(this)
-      game.lastCapturer = this
-      game.advanceTurn()
-    }
+    //cardTake.foreach( cardVector => pileCards ++= cardVector )
+    pileCards ++= cardTake
+    pileCards += cardUse
+    cardTake.foreach( this.game.table.removeCard(_) )
+    handCards -= cardUse
+    if(game.table.allCard.isEmpty) sweep += 1
+    game.deal(this)
+    game.lastCapturer = this
+    game.advanceTurn()
   }
 
   def addCardManually(cardAdd: Buffer[Card]) = {
@@ -54,12 +52,10 @@ case class Player(name: String, game: Game) {
   }
 
   def drop(cardDrop: Card): Unit = {
-    if(handCards.contains(cardDrop)) {
-      game.table.addCard(cardDrop)
-      handCards -= cardDrop
-      game.deal(this)
-      game.advanceTurn()
-    }
+    game.table.addCard(cardDrop)
+    handCards -= cardDrop
+    game.deal(this)
+    game.advanceTurn()
   }
 
   // Aulixiary methods to calculate score
