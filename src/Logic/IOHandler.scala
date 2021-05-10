@@ -27,7 +27,7 @@ class IOHandler {
     }
 
     // Adding turn info
-    fileContent += "#Turn"
+    fileContent += "#Turn:"
     fileContent += "Turn: "  + Game.getTurn
     fileContent += "Table: " + Game.table.allCard.map( _.toString ).mkString("")
 
@@ -75,62 +75,55 @@ class IOHandler {
         buffer
       }
 
-      // Getting metadata into a buffer
-      val dataBuffer = {
-        val lowerData = wholeData.map( _.toLowerCase )
-        val fromMetaOnward = wholeData.drop(lowerData.indexOf("#metadata:") + 1)
-        var returnBuffer = Buffer[String]()
+      val metadata = {
+        val dataLower = wholeData.map( _.toLowerCase.trim )
+        val fromMetaOnward = wholeData.drop(dataLower.indexOf("#metadata:") + 1)
+        val res = Buffer[String]()
         var n = 0
-        while(n <= (fromMetaOnward.size - 1) && !fromMetaOnward(n).startsWith("#")) {
-          returnBuffer += fromMetaOnward(n)
+        while(n < fromMetaOnward.length && !fromMetaOnward(n).startsWith("#")) {
+          res += fromMetaOnward(n)
           n += 1
         }
-        returnBuffer.filter( _ != "" )
+        res
       }
 
-      // Getting players infomation into a buffer
-      var playerBuffer = {
-        val lowerData = wholeData.map( _.toLowerCase )
-        val fromPlayerOnward = wholeData.drop(lowerData.indexOf("#players:") + 1)
-        var returnBuffer = Buffer[String]()
+      var players = {
+        val playerLower = wholeData.map( _.toLowerCase.trim )
+        val fromPlayerOnward = wholeData.drop(playerLower.indexOf("#players:") + 1)
+        val res = Buffer[String]()
         var n = 0
-        while(n <= (fromPlayerOnward.size - 1) && !fromPlayerOnward(n).startsWith("#")) {
-          returnBuffer += fromPlayerOnward(n)
+        while(n < fromPlayerOnward.length && !fromPlayerOnward(n).startsWith("#")) {
+          res += fromPlayerOnward(n)
           n += 1
         }
-        returnBuffer.filter( _ != "" )
+        res
       }
 
-      // Getting turn infomation into a buffer
-      val turnBuffer = {
-        val lowerData = wholeData.map( _.toLowerCase )
-        val fromTurnOnward = wholeData.drop(lowerData.indexOf("turn:") + 1)
-        var returnBuffer = Buffer[String]()
+      val turnInfo = {
+        val turnLower = wholeData.map( _.toLowerCase.trim )
+        val fromTurnOnward = wholeData.drop(turnLower.indexOf("#turn:") + 1)
+        val res = Buffer[String]()
         var n = 0
-        while(n <= (fromTurnOnward.size - 1) && !fromTurnOnward(n).startsWith("#")) {
-          returnBuffer += fromTurnOnward(n)
+        while(n < fromTurnOnward.length && !fromTurnOnward(n).startsWith("#")) {
+          res += fromTurnOnward(n)
           n += 1
         }
-        returnBuffer.filter( _ != "" )
+        res
       }
 
-      // Getting the number of player
-      val numberOfPlayers = dataBuffer.head.drop(dataBuffer.head.indexOf(':') + 1).trim.toInt
-
-      //These are the cards that will not be in the deck
       val cardsNotInDeck = Buffer[Card]()
-      // Clear the current game
       Game.reset()
 
-
-      // Adding players to the game
+      val nrPlr = metadata.head.drop( metadata.head.indexOf(':') + 1 ).trim.toInt
+      println(nrPlr)
 
       // Thsse are the two helper method to add card to hand and pile
       def addCardToHand(cardString: String, player: Player): Unit = {
-        var handString = cardString.toLowerCase.filter( _.toString != "" )
+        var handString = cardString.toLowerCase
         while(handString.nonEmpty) {
           val cardInfo = handString.take(2)
-          val card = new Card(cardInfo(0).toString, cardInfo(2).toString)
+          println(cardInfo)
+          val card = new Card(cardInfo(0).toString, cardInfo(1).toString)
           player.addCardHand(card)
           cardsNotInDeck += card
           handString = handString.drop(2)
@@ -141,16 +134,15 @@ class IOHandler {
         var handString = cardString.toLowerCase
         while(handString.nonEmpty) {
           val cardInfo = handString.take(2)
-          val card = new Card(cardInfo(0).toString, cardInfo(2).toString)
+          val card = new Card(cardInfo(0).toString, cardInfo(1).toString)
           player.addCardPile(card)
           cardsNotInDeck += card
           handString = handString.drop(2)
         }
       }
 
-      // Adding players to the game
       def addPlayerToGame(playerInfo: Buffer[String]) = {
-        val cmp = playerInfo.head.drop(playerInfo.head.indexOf(':') + 1).trim.toLowerCase
+        val cmp = playerInfo.head.drop(playerInfo.head.indexOf(':') + 1).trim.toLowerCase  // Checking if this player is a computer player or not
         val name = playerInfo(1).drop(playerInfo(1).indexOf(':') + 1).trim
         val handCards = playerInfo(2).drop(playerInfo(2).indexOf(':') + 1).trim
         val pileCards = playerInfo(3).drop(playerInfo(3).indexOf(':') + 1).trim
@@ -167,35 +159,33 @@ class IOHandler {
       }
 
 
-      for(n <- 1 to numberOfPlayers) {
-        val thisPlayer = playerBuffer.head +: playerBuffer.drop(1).takeWhile( !_.startsWith("*") )
+      for(n <- 1 to nrPlr) {
+        val thisPlayer = players.head +: players.drop(1).takeWhile( !_.startsWith("*") )
         addPlayerToGame(thisPlayer)
-        playerBuffer = playerBuffer.drop(thisPlayer.size)
+        players = players.drop(thisPlayer.size)
       }
 
-
-      // Setting the turn information
+ // Setting the turn information
 
       // Helper method to add card to table
       def addCardToTable(cardString: String): Unit = {
         var tableString = cardString.toLowerCase
         while(tableString.nonEmpty) {
           val cardInfo = tableString.take(2)
-          val card = new Card(cardInfo(0).toString, cardInfo(2).toString)
+          val card = new Card(cardInfo(0).toString, cardInfo(1).toString)
           Game.table.addCard(card)
           cardsNotInDeck += card
           tableString = tableString.drop(2)
         }
       }
 
-      val turn = turnBuffer(0).drop(turnBuffer(0).indexOf(':') + 1).trim
+      val turn = turnInfo(0).drop(turnInfo(0).indexOf(':') + 1).trim
       Game.setTurn(turn.toInt)                                                 // Set up turn
 
-      val tableCard = turnBuffer(1).drop(turnBuffer(1).indexOf(':') + 1).trim
+      val tableCard = turnInfo(1).drop(turnInfo(1).indexOf(':') + 1).trim
       addCardToTable(tableCard)                                                // Set up table
 
       cardsNotInDeck.foreach( card => Game.removeFromDeck(card) )              // Remove the cards taht are not in the deck from the deck
-
 
     } catch {
       case e: FileNotFoundException =>
