@@ -104,12 +104,9 @@ class ComputerPlayer(name: String) extends Player(name) {
         else if(Game.table.allCard.length > 11) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
         else handCards.filter( findCards(_).nonEmpty )
       }
-      println(possibleCardToUse)
-      println(possibleCardToUse.map( findCards(_)))
       if(possibleCardToUse.isEmpty || Game.table.allCard.isEmpty) {
         drop(findMaxValueCard(handCards.toVector))
       } else {
-        println()
         val cardWithHighestSubset = possibleCardToUse.zip(possibleCardToUse.map( findMaxElementsSubset(_) )).toVector
         val sum = (cardWithHighestSubset.map( card => card._1.handValue + card._2.length )).zip(cardWithHighestSubset).toMap
         val minSum = sum(sum.keys.min)

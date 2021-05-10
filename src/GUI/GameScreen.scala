@@ -79,9 +79,12 @@ object GameScreen extends Panel {
       g.setColor(new Color(0,0,0))
       g.drawString("Score:", 18, 625)
       g.setColor(new Color(0, 12, 175))
-      for(i <- Game.playersList.indices) {
+      for(i <- 0 until Game.nrHumPlr) {
         val yCoord = if(Game.playersList(i).isInstanceOf[ComputerPlayer]) 680 else 625
-        g.drawString(Game.playersList(i).name + ": " + Game.playersList(i).getScore, 150 + 165 * (i % 6), yCoord)
+        g.drawString(Game.playersList(i).name + ": " + Game.playersList(i).getScore, 150 + 165 * (i % 6), 625)
+      }
+      for(i <- 0 until Game.nrCmpPlr) {
+        g.drawString(Game.playersList(i + Game.nrHumPlr).name + ": " + Game.playersList(i + Game.nrHumPlr).getScore, 150 + 165 * (i % 6), 680)
       }
       // Draw capture and drop buttons
       g.setColor(new Color(247, 255, 0))
@@ -132,18 +135,17 @@ object GameScreen extends Panel {
       }
 
       // Pile button is clicked
-      if(e.point.x >= 700 && e.point.y >= 495 && e.point.x <= 750 && e.point.y <= 545) {
+      else if(e.point.x >= 700 && e.point.y >= 495 && e.point.x <= 750 && e.point.y <= 545 && !turnChange) {
         Dialog.showMessage(this, "Cards in pile: " + Game.playerTurn.pile.map( _.toString ).mkString(", "), "Pile cards")
-        this.repaint()
-        this.revalidate()
       }
 
       // Drop button is clicked
-      if(e.point.x >= 875 && e.point.y >= 495 && e.point.x <= 925 && e.point.y <= 545) {
+      else if(e.point.x >= 875 && e.point.y >= 495 && e.point.x <= 925 && e.point.y <= 545 && !turnChange) {
         if(cardUsed.isDefined) {
           Game.playerTurn.drop(cardUsed.get)
-          Game.advanceTurn()
+          cardUsed = None
           turnChange = true
+          Game.advanceTurn()
         } else {
           Dialog.showMessage(this, "Choose a card to drop.", "Action failed.")
         }
@@ -152,12 +154,12 @@ object GameScreen extends Panel {
       }
 
       // Capture button is clicked
-      if(e.point.x >= 875 && e.point.y >= 430 && e.point.x <= 925 && e.point.y <= 480) {
+      else if(e.point.x >= 875 && e.point.y >= 430 && e.point.x <= 925 && e.point.y <= 480 && !turnChange) {
         if(cardUsed.isDefined && cardSelected.nonEmpty) {
           if(Game.validCapture(cardUsed.get, cardSelected)) {
             Game.playerTurn.capture(cardUsed.get, cardSelected)
-            Game.advanceTurn()
             turnChange = true
+            Game.advanceTurn()
           } else {
             cardSelected = Vector[Card]()
             cardUsed = None
@@ -174,7 +176,7 @@ object GameScreen extends Panel {
       for(i <- 0 to 3) {
         val xCoord = 150 + 140 * i
         val yCoord = 430
-        if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 75 && e.point.y <= yCoord + 115) {
+        if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 75 && e.point.y <= yCoord + 115 && !turnChange) {
           if(Game.playerTurn.hand.isDefinedAt(i)) {
             cardUsed = Some(Game.playerTurn.hand(i))
              this.repaint()
@@ -187,13 +189,21 @@ object GameScreen extends Panel {
       for(i <- 0 to 13) {
         val xCoord = 120 + 140 * (i % 7)
         val yCoord = if(i < 7) 80 else 250
-        if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 95 && e.point.y <= yCoord + 145) {
+        if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 95 && e.point.y <= yCoord + 145 && !turnChange) {
           if(Game.table.allCard.isDefinedAt(i)) {
             cardSelected = cardSelected :+ Game.table.allCard(i)
              this.repaint()
              this.revalidate()
           }
         }
+      }
+
+      if(Game.playerTurn.isInstanceOf[ComputerPlayer]) {
+        Game.playerTurn.asInstanceOf[ComputerPlayer].optimalMove()
+        turnChange = true
+        Game.advanceTurn()
+        this.repaint()
+        this.revalidate()
       }
 
   }

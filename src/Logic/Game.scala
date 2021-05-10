@@ -9,6 +9,8 @@ object Game {
   val table = new Table
   val handler = new IOHandler
   var lastCapturer: Option[Player] = None
+  var nrCmpPlr = 0
+  var nrHumPlr = 0
 
   private var players = Buffer[Player]()
   private var turn    = 0
@@ -82,6 +84,8 @@ object Game {
 
   def newGame(cmpPlayer: Int, player: Vector[Player]): Unit = {
     players = player.toBuffer
+    nrCmpPlr = cmpPlayer
+    nrHumPlr = player.length
     for(i <- 1 to cmpPlayer) {
       this.addPlayer( new ComputerPlayer("Cmp" + i) )
     }

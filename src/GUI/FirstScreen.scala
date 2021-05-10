@@ -89,6 +89,7 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
           this.revalidate()
         }
         case this.back => {
+          namePanels = Vector[TextField]()
           mainPanel.contents.clear()
           mainPanel.contents += plrPanel
           this.repaint()

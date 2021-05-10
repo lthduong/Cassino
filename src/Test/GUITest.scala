@@ -17,6 +17,7 @@ object GUITest extends SimpleSwingApplication {
 
   val players = Vector(player1, player2, player3, player4, player5, player6)
   Game.newGame(3, players)
+  GameScreen.visible = true
   def top = new MainFrame {
     contents = GameScreen
     size = new Dimension(1200, 750)
