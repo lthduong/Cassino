@@ -78,9 +78,9 @@ class Game {
 
   def calculateScore(player: Player): Int = {
     var score = player.rawScore
-    val maxHandInTable = players.map( _.hand.length ).max      // The highest number of card in the hand of a player in the whole table
+    val maxPile = players.map( _.pile.length ).max      // The highest number of card in the hand of a player in the whole table
     val maxSpadeInTable = players.map( _.numberOfSpades ).max  // The highest number of spades in the hand of a player in the whole table
-    if(player.hand.length == maxHandInTable) score += 1
+    if(player.pile.length == maxPile) score += 1
     if(player.numberOfSpades == maxSpadeInTable) score += 2
     player.updateScore(score)
     score

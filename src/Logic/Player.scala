@@ -5,7 +5,7 @@ import scala.collection.mutable.Buffer
 
 case class Player(name: String, game: Game) {
 
-  protected var score     = 0    // Might not be needed
+  protected var score     = 0
   protected var sweep     = 0
   protected var hidden    = false
   protected var handCards = Buffer[Card]()
@@ -13,7 +13,7 @@ case class Player(name: String, game: Game) {
 
 
   // These three used to get the var
-  def getScore  = score       // Might not be needed
+  def getScore  = score
   def getSweep  = sweep
   def getHidden = hidden
   def hand   = handCards
@@ -57,13 +57,14 @@ case class Player(name: String, game: Game) {
   }
 
   // Aulixiary methods to calculate score
-  def numberOfAce    = handCards.count( _.name == "1" )
-  def numberOfSpades = handCards.count( _.suit == "s" )
-  def hasDiamondTen  = handCards.count( card => card.name == "0" && card.suit == "d" )
-  def hasSpadeTwo    = handCards.count( card => card.name == "2" && card.suit == "s" )
+  def numberOfAce    = pileCards.count( _.name == "1" )
+  def numberOfSpades = pileCards.count( _.suit == "s" )
+  def hasDiamondTen  = pileCards.count( card => card.name == "0" && card.suit == "d" )
+  def hasSpadeTwo    = pileCards.count( card => card.name == "2" && card.suit == "s" )
 
   // The score regardless of the number of Spades and Card
-  def rawScore       = this.sweep + numberOfAce + hasDiamondTen * 2 + hasSpadeTwo
+  def rawScore       =  this.sweep + numberOfAce + hasDiamondTen * 2 + hasSpadeTwo
+
 
   override def toString = this.name
 
@@ -92,7 +93,6 @@ class ComputerPlayer(name: String, game: Game) extends Player(name, game) {
     cardMap(cardMap.keys.max)
   }
 
-  //TODO: Deal with if hand == 0
   def optimalMove(): Unit = {
     val sweepCard = this.handCards.find( card => this.game.table.allCard.map( _.value ).sum % card.handValue == 0 )
     if(sweepCard.isDefined) capture(sweepCard.get, this.game.table.allCard.toVector)

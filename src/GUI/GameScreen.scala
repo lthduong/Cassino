@@ -101,10 +101,13 @@ class GameScreen(game: Game) extends Panel {
     } else {
       endGame()
       for(i <- game.playersList.indices) {
+        g.setFont(new Font("Arial", 0, 45))
+        g.setColor(new Color(247, 255, 0))
+        g.drawString("Game over! Here are the scores:", 250, 150)
         if(game.winners.contains(game.playersList(i))) g.setColor(new Color(216, 8, 8))
         else g.setColor(new Color(0, 0, 0))
-        g.setFont(new Font("Arial", 0, 40))
-        g.drawString(game.playersList(i) + ": " + game.playersList(i).getScore, 150, 250 + 30 * i)
+        g.setFont(new Font("Arial", 0, 30))
+        g.drawString(game.playersList(i) + ": " + game.playersList(i).getScore, 495, 200 + 50 * i)
       }
     }
   }
