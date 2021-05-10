@@ -93,4 +93,20 @@ object Game {
     (1 to 4).foreach( i => this.dealTable() )
   }
 
+  def reset() = {
+    Game.table.allCard.foreach( Game.table.removeCard(_) )
+    players = Buffer[Player]()
+    lastCapturer = None
+    turn = 0
+    deck = {
+      var cardList = Buffer[Card]()
+      val suit = Vector("s", "d", "c", "h")
+      val name = (0 to 9).map( _.toString ).toVector ++ Vector("j", "q", "k")
+      for(n <- 0 to 51) {
+        cardList = cardList :+ new Card(name(n % name.length), suit(n % suit.length))
+      }
+      cardList
+    }
+  }
+
 }

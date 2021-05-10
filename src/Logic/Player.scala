@@ -40,15 +40,6 @@ case class Player(name: String) {
     Game.lastCapturer = Some(this)
   }
 
-  def addCardManually(cardAdd: Vector[Card]) = {
-    this.pile ++= cardAdd.toBuffer
-    cardAdd.foreach( Game.table.removeCard(_) )
-  }
-
-  def addHandManually(cardAdd: Buffer[Card]) = {
-    this.hand ++= cardAdd
-    //cardAdd.foreach( this.game.table.removeCard(_) )
-  }
 
   def drop(cardDrop: Card): Unit = {
     Game.table.addCard(cardDrop)

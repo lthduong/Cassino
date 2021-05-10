@@ -60,7 +60,7 @@ class IOHandler {
       var currentLine = lineReader.readLine().trim.toLowerCase
 
 
-      if(!(currentLine.startsWith("#cassino") && currentLine.endsWith("1.0"))) {
+      if(!(currentLine.startsWith("casino") && currentLine.endsWith("1.0"))) {
         throw new CorruptedCassinoFIleException("Unknown file type")
       }
 
@@ -68,7 +68,7 @@ class IOHandler {
       val wholeData = {
         var buffer = Buffer[String]()
         currentLine = lineReader.readLine()
-        while(currentLine != null) {
+        while(currentLine != "#END") {
           buffer += currentLine
           currentLine = lineReader.readLine().trim
         }
@@ -119,13 +119,15 @@ class IOHandler {
 
       //These are the cards that will not be in the deck
       val cardsNotInDeck = Buffer[Card]()
+      // Clear the current game
+      Game.reset()
 
 
       // Adding players to the game
 
       // Thsse are the two helper method to add card to hand and pile
       def addCardToHand(cardString: String, player: Player): Unit = {
-        var handString = cardString.toLowerCase
+        var handString = cardString.toLowerCase.filter( _.toString != "" )
         while(handString.nonEmpty) {
           val cardInfo = handString.take(2)
           val card = new Card(cardInfo(0).toString, cardInfo(2).toString)
@@ -148,7 +150,7 @@ class IOHandler {
 
       // Adding players to the game
       def addPlayerToGame(playerInfo: Buffer[String]) = {
-        val cmp = playerInfo.head.drop(playerInfo.head.indexOf(':') + 1).trim.toLowerCase  // Checking if this player is a computer player or not
+        val cmp = playerInfo.head.drop(playerInfo.head.indexOf(':') + 1).trim.toLowerCase
         val name = playerInfo(1).drop(playerInfo(1).indexOf(':') + 1).trim
         val handCards = playerInfo(2).drop(playerInfo(2).indexOf(':') + 1).trim
         val pileCards = playerInfo(3).drop(playerInfo(3).indexOf(':') + 1).trim

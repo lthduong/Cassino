@@ -20,7 +20,7 @@ object GameScreen extends Panel {
 
   def endGame() = {
     if(Game.lastCapturer.isDefined && Game.table.allCard.nonEmpty) {
-      Game.lastCapturer.get.addHandManually(Game.table.allCard)
+      Game.table.allCard.foreach( Game.lastCapturer.get.addCardPile(_) )
       Game.table.allCard.foreach( Game.table.removeCard(_) )
     }
     Game.playersList.foreach( Game.calculateScore(_) )

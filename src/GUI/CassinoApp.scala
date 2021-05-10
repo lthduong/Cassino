@@ -3,15 +3,39 @@ package src.GUI
 import scala.swing._
 import scala.swing.event.ButtonClicked
 import src.Logic.{ComputerPlayer, Game, Player}
+import java.io._
 
 object CassinoApp extends SimpleSwingApplication {
 
-  val save = new MenuItem("Save")
-  val load = new MenuItem("Load")
-  val ins  = new MenuItem("Instruction")
-  val game = new Menu("Game") { contents ++= Vector(save, load) }
-  val help = new Menu("Help") { contents += ins }
-  val menu = new MenuBar { contents ++= Vector(game, help) }
+  def saveGame() = {
+    val file = new File("./save/sv" + saveTime + ".txt")
+    val chooser = new FileChooser
+    chooser.selectedFile = file
+    if(chooser.showSaveDialog(null) == FileChooser.Result.Approve) {
+      Game.handler.saveGame(chooser.selectedFile.getPath)
+      saveTime += 1
+    }
+  }
+
+  def loadGame() = {
+    val chooser = new FileChooser
+    if(chooser.showOpenDialog(null) == FileChooser.Result.Approve) {
+      Game.handler.loadGame(chooser.selectedFile.getPath)
+      FirstScreen.visible = false
+      GameScreen.visible = true
+      GameScreen.repaint()
+      GameScreen.revalidate()
+    }
+  }
+
+
+  val save     = new MenuItem(Action("Save game") {saveGame()} )
+  val load     = new MenuItem(Action("Load Game") {loadGame()} )
+  val ins      = new MenuItem("Instruction")
+  val game     = new Menu("Game") { contents ++= Vector(save, load) }
+  val help     = new Menu("Help") { contents += ins }
+  val menu     = new MenuBar { contents ++= Vector(game, help) }
+  var saveTime = 0
 
   val content: Panel = new BoxPanel(Orientation.Vertical) {
     contents += FirstScreen
@@ -51,6 +75,7 @@ object CassinoApp extends SimpleSwingApplication {
       val source = b.source
       source match {
         case ins => InstructionScreen.top.visible = true
+
       }
     }
   }
