@@ -114,15 +114,15 @@ class IOHandler {
       val cardsNotInDeck = Buffer[Card]()
       Game.reset()
 
+      // Setting up players for the game
+
       val nrPlr = metadata.head.drop( metadata.head.indexOf(':') + 1 ).trim.toInt
-      println(nrPlr)
 
       // Thsse are the two helper method to add card to hand and pile
       def addCardToHand(cardString: String, player: Player): Unit = {
         var handString = cardString.toLowerCase
         while(handString.nonEmpty) {
           val cardInfo = handString.take(2)
-          println(cardInfo)
           val card = new Card(cardInfo(0).toString, cardInfo(1).toString)
           player.addCardHand(card)
           cardsNotInDeck += card
@@ -148,8 +148,14 @@ class IOHandler {
         val pileCards = playerInfo(3).drop(playerInfo(3).indexOf(':') + 1).trim
         val score = playerInfo(4).drop(playerInfo(4).indexOf(':') + 1).trim
         val newPlayer = {
-          if(cmp == "false") new Player(name)
-          else if(cmp == "true") new ComputerPlayer(name)
+          if(cmp == "false") {
+            Game.nrHumPlr += 1
+            new Player(name)
+          }
+          else if(cmp == "true") {
+            Game.nrCmpPlr += 1
+            new ComputerPlayer(name)
+          }
           else throw new CorruptedCassinoFIleException("Something is wrong with the player infomation")
         }
         addCardToHand(handCards, newPlayer)
@@ -165,7 +171,8 @@ class IOHandler {
         players = players.drop(thisPlayer.size)
       }
 
- // Setting the turn information
+
+      // Setting the turn information
 
       // Helper method to add card to table
       def addCardToTable(cardString: String): Unit = {
