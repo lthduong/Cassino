@@ -19,7 +19,6 @@ class GameScreen(game: Game) extends Panel {
   // Used to draw a selection highlight
   def drawSelection(g: Graphics2D, x: Int, y: Int, width: Int, length: Int) = {
     g.setStroke(new BasicStroke(3))
-    g.setColor(new Color(216, 8, 8))
     g.drawLine(x        , y         , x + width, y         )
     g.drawLine(x        , y         , x        , y + length)
     g.drawLine(x + width, y + length, x + width, y         )
@@ -42,7 +41,10 @@ class GameScreen(game: Game) extends Panel {
       val cardImage = game.table.allCard(i).image.getScaledInstance(95, 145, 76)
       val yCoord = if(i < 7) 80 else 250
       g.drawImage(cardImage, 120 + 140 * (i % 7), yCoord, null)
-      if(cardSelected.contains(game.table.allCard(i))) drawSelection(g, 120 + 140 * (i % 7), yCoord, 95, 145)
+      if(cardSelected.contains(game.table.allCard(i))) {
+         g.setColor(new Color(0, 213, 255))
+        drawSelection(g, 120 + 140 * (i % 7), yCoord, 95, 145)
+      }
     }
     /* } else {
       g.setFont(new Font("Arial", 0, 30))
@@ -59,6 +61,7 @@ class GameScreen(game: Game) extends Panel {
       }
     } */
     // Draw player hand
+    g.setColor(new Color(0, 0, 0))
     g.setFont(new Font("Arial", 0, 30))
     g.drawString("Hand:", 18, 500)
     for(i <- game.playerTurn.hand.indices) {
@@ -67,7 +70,10 @@ class GameScreen(game: Game) extends Panel {
         else game.playerTurn.hand(i).image.getScaledInstance(75, 115, 76)
       }
       g.drawImage(cardImage, 150 + 140 * i, 430, null)
-      if(cardUsed.contains(game.playerTurn.hand(i))) drawSelection(g, 150 + 140 * i, 430, 75, 115)
+      if(cardUsed.contains(game.playerTurn.hand(i))) {
+        g.setColor(new Color(216, 8, 8))
+        drawSelection(g, 150 + 140 * i, 430, 75, 115)
+      }
     }
     // Draw scoreboard
     g.setColor(new Color(0,0,0))
@@ -121,29 +127,31 @@ class GameScreen(game: Game) extends Panel {
       }
 
       // If a card on hand is select
-      if(e.point.x >= 150 && e.point.y >= 430 && e.point.x <= 225 && e.point.y <= 545) {
-        cardUsed = Some(game.playerTurn.hand(0))
-        this.repaint()
-        this.revalidate()
+      for(i <- 0 to 3) {
+        val xCoord = 150 + 140 * i
+        val yCoord = 430
+        if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 75 && e.point.y <= yCoord + 115) {
+          if(game.table.allCard.isDefinedAt(i)) {
+            cardUsed = Some(game.playerTurn.hand(i))
+             this.repaint()
+             this.revalidate()
+          }
+        }
       }
 
-      if(e.point.x >= 290 && e.point.y >= 430 && e.point.x <= 365 && e.point.y <= 545) {
-        cardUsed = Some(game.playerTurn.hand(1))
-        this.repaint()
-        this.revalidate()
+      // If a card on the table is selected
+      for(i <- 0 to 13) {
+        val xCoord = 120 + 140 * (i % 7)
+        val yCoord = if(i < 7) 80 else 250
+        if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 95 && e.point.y <= yCoord + 145) {
+          if(game.table.allCard.isDefinedAt(i)) {
+            cardSelected = cardSelected :+ game.table.allCard(i)
+             this.repaint()
+             this.revalidate()
+          }
+        }
       }
 
-      if(e.point.x >= 430 && e.point.y >= 430 && e.point.x <= 505 && e.point.y <= 545) {
-        cardUsed = Some(game.playerTurn.hand(2))
-        this.repaint()
-        this.revalidate()
-      }
-
-      if(e.point.x >= 570 && e.point.y >= 430 && e.point.x <= 645 && e.point.y <= 545) {
-        cardUsed = Some(game.playerTurn.hand(3))
-        this.repaint()
-        this.revalidate()
-      }
   }
 
   this.revalidate()
