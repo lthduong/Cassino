@@ -8,7 +8,7 @@ class Game {
 
   val table = new Table
   val handler = new IOHandler
-  var lastCapturer: Player = new Player("Dummy", this)
+  var lastCapturer: Option[Player] = None
 
   private var players = Buffer[Player]()
   private var turn    = 0
@@ -29,7 +29,7 @@ class Game {
   def getTurn     = turn
   def playerTurn  = players(turn % players.length)
   def getDeck     = this.deck
-  def isOver      = players.forall( _.hand.isEmpty && deck.isEmpty )
+  def isOver      = players.forall( _.hand.isEmpty )
   def winners     = {
     val playerByScore = players.map( calculateScore(_) ).zip(players).groupBy( _._1 )
     playerByScore(playerByScore.keys.max).map( _._2 )
@@ -52,7 +52,7 @@ class Game {
   // sum all the value, if the value is n * cardUse.handValue, then there is no overlap
   def validCapture(cardUse: Card, cardTake: Vector[Card]): Boolean = {
     val cardSum = cardTake.zip(cardTake.map( _.value )).toSet.toMap.values.sum
-    (cardSum != 0) && (cardSum % cardUse.handValue == 0)
+    (cardSum != 0) && (cardSum % cardUse.handValue == 0) && (cardTake.forall( _.value <= cardUse.handValue ))
   }
 
   // Deal cards to the targeted player until he has 4 cards

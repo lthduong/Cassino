@@ -37,12 +37,11 @@ case class Player(name: String, game: Game) {
     handCards -= cardUse
     if(game.table.allCard.isEmpty) sweep += 1
     game.deal(this)
-    game.lastCapturer = this
-    game.advanceTurn()
+    game.lastCapturer = Some(this)
   }
 
-  def addCardManually(cardAdd: Buffer[Card]) = {
-    this.pile ++= cardAdd
+  def addCardManually(cardAdd: Vector[Card]) = {
+    this.pile ++= cardAdd.toBuffer
     cardAdd.foreach( this.game.table.removeCard(_) )
   }
 
@@ -55,7 +54,6 @@ case class Player(name: String, game: Game) {
     game.table.addCard(cardDrop)
     handCards -= cardDrop
     game.deal(this)
-    game.advanceTurn()
   }
 
   // Aulixiary methods to calculate score
