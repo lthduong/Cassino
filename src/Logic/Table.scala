@@ -8,8 +8,6 @@ class Table {
 
   def allCard = cardsOnTable
 
-  def hasCard(card: Card)= cardsOnTable.contains(card)
-
   def addCard(card: Card) = cardsOnTable += card
 
   def removeCard(card: Card) = cardsOnTable -= card

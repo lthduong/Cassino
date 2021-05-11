@@ -7,7 +7,6 @@ case class Player(name: String) {
 
   protected var score     = 0
   protected var sweep     = 0
-  protected var hidden    = false
   protected var handCards = Buffer[Card]()
   protected var pileCards = Buffer[Card]()
 
@@ -15,13 +14,11 @@ case class Player(name: String) {
   // These three used to get the var
   def getScore  = score
   def getSweep  = sweep
-  def getHidden = hidden
   def hand   = handCards
   def pile   = pileCards
 
 
   // These are used to update the var
-  def updateHidden()             = { hidden = !hidden }
   def updateSweep()              = { sweep += 1       }
   def updateScore(newScore: Int) = { score = newScore }
   def addCardHand(card: Card)    = { handCards += card}
