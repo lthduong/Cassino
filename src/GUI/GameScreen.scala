@@ -97,6 +97,7 @@ object GameScreen extends Panel {
       g.drawString("Capture", 935, 465)
       g.drawString("Drop", 935, 530)
       g.drawString("Pile", 760, 530)
+
     // When a player's turn end
     } else if(!Game.isOver && turnChange) {
       g.setColor(new Color(0, 0, 0))
@@ -104,6 +105,7 @@ object GameScreen extends Panel {
       g.drawString("Move to " + Game.playerTurn.name + "'s turn", 150, 290)
       g.setFont(new Font("Arial", 0, 20))
       g.drawString("Press the screen to continue", 150, 340)
+
     // When the game is over
     } else {
       endGame()
@@ -146,6 +148,7 @@ object GameScreen extends Panel {
           cardUsed = None
           turnChange = true
           Game.advanceTurn()
+          if(Game.playerTurn.hand.isEmpty) Game.advanceTurn()
         } else {
           Dialog.showMessage(this, "Choose a card to drop.", "Action failed.")
         }
@@ -158,8 +161,12 @@ object GameScreen extends Panel {
         if(cardUsed.isDefined && cardSelected.nonEmpty) {
           if(Game.validCapture(cardUsed.get, cardSelected)) {
             Game.playerTurn.capture(cardUsed.get, cardSelected)
+            if(Game.table.allCard.isEmpty) {
+              Dialog.showMessage(this, "You scored a sweep! Sweep count: " + Game.playerTurn.getSweep)
+            }
             turnChange = true
             Game.advanceTurn()
+            if(Game.playerTurn.hand.isEmpty) Game.advanceTurn()
           } else {
             cardSelected = Vector[Card]()
             cardUsed = None
@@ -199,7 +206,8 @@ object GameScreen extends Panel {
       }
 
       if(Game.playerTurn.isInstanceOf[ComputerPlayer]) {
-        Game.playerTurn.asInstanceOf[ComputerPlayer].optimalMove()
+        val moveMade = Game.playerTurn.asInstanceOf[ComputerPlayer].optimalMove()
+        Dialog.showMessage(this, Game.playerTurn.name + " used " + moveMade.head + " to capture " + moveMade.tail.mkString(", "))
         turnChange = true
         Game.advanceTurn()
         this.repaint()

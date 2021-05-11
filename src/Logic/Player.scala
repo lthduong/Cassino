@@ -30,7 +30,6 @@ case class Player(name: String) {
 
 
   def capture(cardUse: Card, cardTake: Vector[Card]): Unit = {
-    //cardTake.foreach( cardVector => pileCards ++= cardVector )
     pileCards ++= cardTake
     pileCards += cardUse
     cardTake.foreach( Game.table.removeCard(_) )
@@ -84,24 +83,29 @@ class ComputerPlayer(name: String) extends Player(name) {
     cardMap(cardMap.keys.max)
   }
 
-  def optimalMove(): Unit = {
+  def optimalMove(): Vector[Card] = {
     val sweepCard = this.handCards.find( card => Game.table.allCard.map( _.value ).sum % card.handValue == 0 )
-    if(sweepCard.isDefined) capture(sweepCard.get, Game.table.allCard.toVector)
+    if(sweepCard.isDefined) {
+      val cardGet = Game.table.allCard.toVector
+      capture(sweepCard.get, cardGet)
+      Vector(sweepCard.get) ++ cardGet
+    }
     else {
       val possibleCardToUse = {
         if(Game.table.allCard.length > 9) handCards.filter( _.handValue < 13 ).filter( findCards(_).nonEmpty )
-        //else if(this.game.table.allCard.length > 14) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
-        //else if(this.game.table.allCard.length > 16) handCards.filter( _.handValue < 6 ).filter( findCards(_).nonEmpty )
         else if(Game.table.allCard.length > 11) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
         else handCards.filter( findCards(_).nonEmpty )
       }
       if(possibleCardToUse.isEmpty || Game.table.allCard.isEmpty) {
-        drop(findMaxValueCard(handCards.toVector))
+        val cardUsed = findMaxValueCard(handCards.toVector)
+        drop(cardUsed)
+        Vector(cardUsed)
       } else {
         val cardWithHighestSubset = possibleCardToUse.zip(possibleCardToUse.map( findMaxElementsSubset(_) )).toVector
         val sum = (cardWithHighestSubset.map( card => card._1.handValue + card._2.length )).zip(cardWithHighestSubset).toMap
         val minSum = sum(sum.keys.min)
         capture(minSum._1, minSum._2)
+        Vector(minSum._1) ++ minSum._2
       }
     }
       // If sum of all cards on table = n * some card in hand's handValue (i.e, sweepable), sweep: Done
