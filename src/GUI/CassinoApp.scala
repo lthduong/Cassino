@@ -29,8 +29,8 @@ object CassinoApp extends SimpleSwingApplication {
   }
 
 
-  val save     = new MenuItem(Action("Save game") { saveGame() } )
-  val load     = new MenuItem(Action("Load Game") { loadGame() } )
+  val save     = new MenuItem(Action("Save") { saveGame() } )
+  val load     = new MenuItem(Action("Load") { loadGame() } )
   val ins      = new MenuItem("Instruction")
   val game     = new Menu("Game") { contents ++= Vector(save, load) }
   val help     = new Menu("Help") { contents += ins }
