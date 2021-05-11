@@ -84,7 +84,7 @@ class ComputerPlayer(name: String) extends Player(name) {
   }
 
   def optimalMove(): Vector[Card] = {
-    val sweepCard = this.handCards.find( card => Game.table.allCard.map( _.value ).sum % card.handValue == 0 )
+    val sweepCard = this.handCards.find( card => Game.table.allCard.forall( _.value <= card.handValue ) && Game.table.allCard.map( _.value ).sum % card.handValue == 0 )
     if(sweepCard.isDefined) {
       val cardGet = Game.table.allCard.toVector
       capture(sweepCard.get, cardGet)

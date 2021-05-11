@@ -96,6 +96,8 @@ object Game {
   def reset() = {
     Game.table.allCard.foreach( Game.table.removeCard(_) )
     players = Buffer[Player]()
+    nrHumPlr = 0
+    nrCmpPlr = 0
     lastCapturer = None
     turn = 0
     deck = {

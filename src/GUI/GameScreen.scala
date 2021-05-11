@@ -164,6 +164,8 @@ object GameScreen extends Panel {
             if(Game.table.allCard.isEmpty) {
               Dialog.showMessage(this, "You scored a sweep! Sweep count: " + Game.playerTurn.getSweep)
             }
+            cardSelected = Vector[Card]()
+            cardUsed = None
             turnChange = true
             Game.advanceTurn()
             if(Game.playerTurn.hand.isEmpty) Game.advanceTurn()
