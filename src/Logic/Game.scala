@@ -2,7 +2,7 @@ package src.Logic
 
 import scala.collection.mutable.Buffer
 import scala.util.Random
-import src.Logic.IOHandler
+
 
 object Game {
 

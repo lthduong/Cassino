@@ -104,8 +104,9 @@ class ComputerPlayer(name: String) extends Player(name) {
         val cardWithHighestSubset = possibleCardToUse.zip(possibleCardToUse.map( findMaxElementsSubset(_) )).toVector
         val sum = (cardWithHighestSubset.map( card => card._1.handValue + card._2.length )).zip(cardWithHighestSubset).toMap
         val minSum = sum(sum.keys.min)
-        capture(minSum._1, minSum._2)
-        Vector(minSum._1) ++ minSum._2
+        println("minSum1: " + minSum._1 + ", minSum2: " + minSum._2)
+        capture(minSum._1, minSum._2.toList.toVector)
+        Vector(minSum._1) ++ minSum._2.toList.toVector
       }
     }
       // If sum of all cards on table = n * some card in hand's handValue (i.e, sweepable), sweep: Done

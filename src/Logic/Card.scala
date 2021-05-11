@@ -2,7 +2,6 @@ package src.Logic
 
 
 import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
 import java.io._
 
 case class Card(name: String, suit: String) {

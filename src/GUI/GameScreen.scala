@@ -8,7 +8,6 @@ import javax.imageio.ImageIO
 import java.io._
 
 
-// This is the class acts as the game screen
 
 object GameScreen extends Panel {
 
@@ -47,6 +46,8 @@ object GameScreen extends Panel {
       g.setColor(new Color(0, 0, 0))
       g.setFont(new Font("Arial", java.awt.Font.BOLD, 45))
       g.drawString(Game.playerTurn.name + "'s turn", 18, 55)
+      g.setFont(new Font("Arial", 0, 30))
+      g.drawString("Deck remain: " + Game.getDeck.length, 850, 55)
       // Draw table for the turn
       // If the number of cards on table <= 14, it will be displayed in image
       // If the number of cards on table > 14, it will be displayed by text
@@ -214,8 +215,14 @@ object GameScreen extends Panel {
       }
 
       if(Game.playerTurn.isInstanceOf[ComputerPlayer]) {
+        println("Hand:" + Game.playerTurn.hand)
         val moveMade = Game.playerTurn.asInstanceOf[ComputerPlayer].optimalMove()
-        Dialog.showMessage(this, Game.playerTurn.name + " used " + moveMade.head + " to capture " + moveMade.tail.mkString(", "))
+        println("Pile: " + Game.playerTurn.pile)
+        if(moveMade.length == 1) {
+          Dialog.showMessage(this, Game.playerTurn.name + " dropped " + moveMade.head)
+        } else {
+          Dialog.showMessage(this, Game.playerTurn.name + " used " + moveMade.head + " to capture " + moveMade.tail.mkString(", "))
+        }
         turnChange = true
         Game.advanceTurn()
         this.repaint()
