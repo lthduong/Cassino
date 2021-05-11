@@ -12,7 +12,7 @@ object InstructionScreen extends SimpleSwingApplication {
     " 2. Each round, a player can either use a card to take other cards from the table or to put it on the table. If the player cannot take anything from the\n" +
     " table, he/she must put one of his/her cards on the table. If the player takes cards from the table, he/she puts them in a separate pile of his/her own.\n" +
     " 3. The pile is used to count the points after the round has ended.\n\n" +
-    " 4. The player can use a card to take one or more cards of the same value and cards with their summed value equal to i * the used card for some integer i.\n\n" +
+    " 4. The player can use a card to take one or more cards of the same value and cards with their summed value equal to i * used card for some integer i.\n\n" +
     " 5. If some player gets all the cards from the table at the same time, he/she gets a so- called sweep which is written down.\n\n" +
     " 6. There are a couple of cards that are more valuable in the hand than in the table,\n" +
     "       Aces: 14 in hand, 1 on table\n" +
