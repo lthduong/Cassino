@@ -200,9 +200,15 @@ object GameScreen extends Panel {
         val yCoord = if(i < 7) 80 else 250
         if(e.point.x >= xCoord && e.point.y >= yCoord && e.point.x <= xCoord + 95 && e.point.y <= yCoord + 145 && !turnChange) {
           if(Game.table.allCard.isDefinedAt(i)) {
-            cardSelected = cardSelected :+ Game.table.allCard(i)
-             this.repaint()
-             this.revalidate()
+            if(!cardSelected.contains(Game.table.allCard(i))) {
+              cardSelected = cardSelected :+ Game.table.allCard(i)
+              this.repaint()
+              this.revalidate()
+            } else {
+              cardSelected = cardSelected.filterNot( _ == Game.table.allCard(i) )
+              this.repaint()
+              this.revalidate()
+            }
           }
         }
       }
