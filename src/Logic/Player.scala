@@ -76,7 +76,6 @@ class ComputerPlayer(name: String) extends Player(name) {
 
   private def findMaxElementsSubset(card: Card) = {
     val cardMap = findCards(card).map( _.length ).zip(findCards(card)).toMap
-    println(cardMap.keys)
     cardMap(cardMap.keys.max)
   }
 
@@ -90,7 +89,7 @@ class ComputerPlayer(name: String) extends Player(name) {
     else {
       val possibleCardToUse = {
         if(Game.table.allCard.length > 9) handCards.filter( _.handValue < 13 ).filter( findCards(_).nonEmpty )
-        else if(Game.table.allCard.length > 11) handCards.filter( _.handValue < 10 ).filter( findCards(_).nonEmpty )
+        else if(Game.table.allCard.length > 11) handCards.filter( _.handValue < 9 ).filter( findCards(_).nonEmpty )
         else handCards.filter( findCards(_).nonEmpty )
       }
       if(possibleCardToUse.isEmpty || Game.table.allCard.isEmpty) {
@@ -101,16 +100,10 @@ class ComputerPlayer(name: String) extends Player(name) {
         val cardWithHighestSubset = possibleCardToUse.zip(possibleCardToUse.map( findMaxElementsSubset(_) )).toVector
         val sum = (cardWithHighestSubset.map( card => card._1.handValue + card._2.length )).zip(cardWithHighestSubset).toMap
         val minSum = sum(sum.keys.min)
-        println("minSum1: " + minSum._1 + ", minSum2: " + minSum._2)
-        capture(minSum._1, minSum._2.toList.toVector)
-        Vector(minSum._1) ++ minSum._2.toList.toVector
+        capture(minSum._1, minSum._2.toSet.toVector)
+        Vector(minSum._1) ++ minSum._2.toSet.toVector
       }
     }
-      // If sum of all cards on table = n * some card in hand's handValue (i.e, sweepable), sweep: Done
-      // If there are no cards on table or no card that can be used, drop the highest value card: Done
-      // If the number of card on table is 16 or greater, and there are no cards smaller than 6 in hand, drop: Done
-      // 1: calculate all possible combination for each card. For each card, getting the combination that has maximum length
-      // and sum it up with the cardUse value and choose base on that. Goal: Let the cards'value on the field as high as possible to not let others capture easily.
   }
 
 }

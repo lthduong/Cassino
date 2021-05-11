@@ -93,7 +93,7 @@ object Game {
     (1 to 4).foreach( i => this.dealTable() )
   }
 
-  def reset() = {
+  def reset(): Unit = {
     Game.table.allCard.foreach( Game.table.removeCard(_) )
     players = Buffer[Player]()
     nrHumPlr = 0

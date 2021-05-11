@@ -215,9 +215,7 @@ object GameScreen extends Panel {
       }
 
       if(Game.playerTurn.isInstanceOf[ComputerPlayer]) {
-        println("Hand:" + Game.playerTurn.hand)
         val moveMade = Game.playerTurn.asInstanceOf[ComputerPlayer].optimalMove()
-        println("Pile: " + Game.playerTurn.pile)
         if(moveMade.length == 1) {
           Dialog.showMessage(this, Game.playerTurn.name + " dropped " + moveMade.head)
         } else {
