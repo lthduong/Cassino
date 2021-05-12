@@ -26,7 +26,7 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
   }
 
 
-  // The place where the user can type the number of player they want
+  // The place where the user can choose the number of player they want
   val plrPanel = new BoxPanel(Orientation.Vertical) {
     contents += new FlowPanel {
       contents ++= Vector(cmpPrompt, cmpPlayers)
@@ -43,13 +43,14 @@ object FirstScreen extends BoxPanel(Orientation.Vertical) {
   }
 
 
+  // The main panel of the screen
   val mainPanel = new FlowPanel {
     contents += plrPanel
     background = new Color(0, 153, 0)
   }
 
 
-  // This method will create a panel to input names
+  // This method will create text fields for name input
   def getName(number: Int): BoxPanel = {
     val namePrompt = new BoxPanel(Orientation.Vertical) {
       for( i <- 1 to number ) {

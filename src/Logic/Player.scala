@@ -5,13 +5,14 @@ import scala.collection.mutable.Buffer
 
 case class Player(name: String) {
 
+  // Variables to store the state of a player
   protected var score     = 0
   protected var sweep     = 0
   protected var handCards = Buffer[Card]()
   protected var pileCards = Buffer[Card]()
 
 
-  // These three used to get the var
+  // These are used to get the var
   def getScore  = score
   def getSweep  = sweep
   def hand   = handCards
@@ -25,7 +26,6 @@ case class Player(name: String) {
   def addCardPile(card: Card)    = { pileCards += card}
 
 
-
   def capture(cardUse: Card, cardTake: Vector[Card]): Unit = {
     pileCards ++= cardTake
     pileCards += cardUse
@@ -36,20 +36,19 @@ case class Player(name: String) {
     Game.lastCapturer = Some(this)
   }
 
-
   def drop(cardDrop: Card): Unit = {
     Game.table.addCard(cardDrop)
     handCards -= cardDrop
     Game.deal(this)
   }
 
+
   // Aulixiary methods to calculate score
   def numberOfAce    = pileCards.count( _.name == "1" )
   def numberOfSpades = pileCards.count( _.suit == "s" )
   def hasDiamondTen  = pileCards.count( card => card.name == "0" && card.suit == "d" )
   def hasSpadeTwo    = pileCards.count( card => card.name == "2" && card.suit == "s" )
-
-  // The score regardless of the number of Spades and Card
+  // The score without taking into account the number of Spades and Card
   def rawScore       =  this.sweep + numberOfAce + hasDiamondTen * 2 + hasSpadeTwo
 
 
@@ -60,7 +59,7 @@ case class Player(name: String) {
 
 class ComputerPlayer(name: String) extends Player(name) {
 
-
+  // This method is used to get the valid combinations of a given card
   def findCards(cardUsed: Card): Vector[Vector[Card]] = {
     val allCombos = Game.table.allCard.filter( _.value <= cardUsed.handValue ).toSet.subsets()
     val possibleCombos = allCombos.filter( combo => combo.map( _.value ).sum == cardUsed.handValue ).toVector.map( subset => subset.toVector )
@@ -68,7 +67,7 @@ class ComputerPlayer(name: String) extends Player(name) {
     comboCombination.filter( setOfCombos => Game.validCapture(cardUsed, setOfCombos.flatten) ).map( _.flatten )
   }
 
-
+  // Some helper methods for the optimalMove
   private def findMaxValueCard(cardVector: Vector[Card]) = {
     val cardMap = cardVector.map( _.value ).zip(cardVector).toMap
     cardMap(cardMap.keys.max)
@@ -79,8 +78,13 @@ class ComputerPlayer(name: String) extends Player(name) {
     cardMap(cardMap.keys.max)
   }
 
+
+  // The optimalMove method. This method first check if the table can be sweeped, if yes, sweep the table.
+  // If the table cannot be sweeped, the medthod choose possible cards to used based on the number of cards left on the table.
+  // If no card can be captured, the method drop the card with the highest value to the table.
+  // Else the card that has the smallest sum of its handValue with the size of its maximum combo will be used.
   def optimalMove(): Vector[Card] = {
-    val sweepCard = this.handCards.find( card => Game.table.allCard.forall( _.value <= card.handValue ) && Game.table.allCard.map( _.value ).sum % card.handValue == 0 )
+    val sweepCard = this.handCards.find( card => Game.validCapture(card, Game.table.allCard.toVector) )
     if(sweepCard.isDefined) {
       val cardGet = Game.table.allCard.toVector
       capture(sweepCard.get, cardGet)

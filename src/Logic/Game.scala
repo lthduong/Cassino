@@ -6,6 +6,7 @@ import scala.util.Random
 
 object Game {
 
+  // Variables to store the game's state
   val table = new Table
   val handler = new IOHandler
   var lastCapturer: Option[Player] = None
@@ -37,25 +38,22 @@ object Game {
     playerByScore(playerByScore.keys.max).map( _._2 )
   }
 
-  // Use to advancing turn
+
+  // Some methods used to modify the value of the variables
   def advanceTurn() = { turn += 1 }
-
-  // Use to set turn to a specific player
   def setTurn(number: Int) = { turn = number }
-
-  // Use to remove a specific card from the deck
   def removeFromDeck(card: Card) = if(deck.contains(card)) deck -= card
-
   def addPlayer(player: Player): Unit = { players = players :+ player }
-
   def shuffle() = deck = Random.shuffle(deck)
 
+
   // To check if the card vector is overlapped, first zip the vector of combo with its values and convert to Set, and then
-  // sum all the value, if the value is n * cardUse.handValue, then there is no overlap
+  // sum all the value, if the value is i * cardUse.handValue, then there is no overlap
   def validCapture(cardUse: Card, cardTake: Vector[Card]): Boolean = {
     val cardSum = cardTake.zip(cardTake.map( _.value )).toSet.toMap.values.sum
     (cardSum != 0) && (cardSum % cardUse.handValue == 0) && (cardTake.forall( _.value <= cardUse.handValue ))
   }
+
 
   // Deal cards to the targeted player until he has 4 cards
   def deal(player: Player): Unit = {
@@ -65,23 +63,25 @@ object Game {
       deck -= deck.head
     }
   }
-
-  //Deal cards to the table
+  // Deal cards to the table
   def dealTable(): Unit = {
     table.addCard(deck.head)
     deck -= deck.head
   }
 
+
   def calculateScore(player: Player): Int = {
     var score = player.rawScore
-    val maxPile = players.map( _.pile.length ).max      // The highest number of card in the hand of a player in the whole table
-    val maxSpadeInTable = players.map( _.numberOfSpades ).max  // The highest number of spades in the hand of a player in the whole table
+    val maxPile = players.map( _.pile.length ).max             // The highest number of card in the pile of a player in the whole table
+    val maxSpadeInTable = players.map( _.numberOfSpades ).max  // The highest number of spades in the pile of a player in the whole table
     if(player.pile.length == maxPile) score += 1
     if(player.numberOfSpades == maxSpadeInTable) score += 2
     player.updateScore(score)
     score
   }
 
+
+  // Initiate a new game using the information provided by the user
   def newGame(cmpPlayer: Int, player: Vector[Player]): Unit = {
     players = player.toBuffer
     nrCmpPlr = cmpPlayer
@@ -93,6 +93,8 @@ object Game {
     (1 to 4).foreach( i => this.dealTable() )
   }
 
+
+  // Reset the game state to initial state
   def reset(): Unit = {
     Game.table.allCard.foreach( Game.table.removeCard(_) )
     players = Buffer[Player]()

@@ -118,7 +118,7 @@ class IOHandler {
 
       val nrPlr = metadata.head.drop( metadata.head.indexOf(':') + 1 ).trim.toInt
 
-      // Thsse are the two helper method to add card to hand and pile
+      // Some helper methods
       def addCardToHand(cardString: String, player: Player): Unit = {
         var handString = cardString.toLowerCase
         while(handString.nonEmpty) {

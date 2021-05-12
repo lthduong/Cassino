@@ -6,7 +6,6 @@ import java.io._
 
 case class Card(name: String, suit: String) {
 
-  // Note: the path "." is the root of the project
   val image = ImageIO.read(new File("./images/cards/" + this.toString + ".png"))
 
   val value: Int = {

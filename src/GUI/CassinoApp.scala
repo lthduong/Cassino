@@ -7,6 +7,7 @@ import java.io._
 
 object CassinoApp extends SimpleSwingApplication {
 
+  // Methods to take care of save and load function
   def saveGame() = {
     val file = new File("./save/sv" + saveTime + ".txt")
     val chooser = new FileChooser

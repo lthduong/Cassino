@@ -12,11 +12,12 @@ import java.io._
 object GameScreen extends Panel {
 
   visible = false
-
   var cardSelected = Vector[Card]()
   var cardUsed: Option[Card] = None
   var turnChange = false
 
+
+  // Used to revalidate when the game is over
   def endGame() = {
     if(Game.lastCapturer.isDefined && Game.table.allCard.nonEmpty) {
       Game.table.allCard.foreach( Game.lastCapturer.get.addCardPile(_) )
@@ -27,6 +28,7 @@ object GameScreen extends Panel {
     this.revalidate()
   }
 
+
   // Used to draw a selection highlight
   def drawSelection(g: Graphics2D, x: Int, y: Int, width: Int, length: Int) = {
     g.setStroke(new BasicStroke(3))
@@ -36,22 +38,21 @@ object GameScreen extends Panel {
     g.drawLine(x + width, y + length, x        , y + length)
   }
 
+
   override def paintComponent(g: Graphics2D) = {
     // Draw background
     g.setColor(new Color(0, 153, 0))
     g.fillRect(0, 0, 1200, 750)
 
+    // If this is the turn of a player
     if(!Game.isOver && !turnChange) {
-      // Draw turn
+      // Draw turn information
       g.setColor(new Color(0, 0, 0))
       g.setFont(new Font("Arial", java.awt.Font.BOLD, 45))
       g.drawString(Game.playerTurn.name + "'s turn", 18, 55)
       g.setFont(new Font("Arial", 0, 30))
       g.drawString("Deck remain: " + Game.getDeck.length, 850, 55)
       // Draw table for the turn
-      // If the number of cards on table <= 14, it will be displayed in image
-      // If the number of cards on table > 14, it will be displayed by text
-      // if(game.table.allCard.length <= 14) {
       for(i <- Game.table.allCard.indices) {
         val cardImage = Game.table.allCard(i).image.getScaledInstance(95, 145, 76)
         val yCoord = if(i < 7) 80 else 250
@@ -130,6 +131,7 @@ object GameScreen extends Panel {
   this.listenTo(this.mouse.clicks)
   this.reactions += {
     case e: MousePressed =>
+
       // If the screen is press when the turn is changing
       if(turnChange) {
         turnChange = false
@@ -214,6 +216,7 @@ object GameScreen extends Panel {
         }
       }
 
+      // If the turn belongs to a computer player
       if(Game.playerTurn.isInstanceOf[ComputerPlayer]) {
         val moveMade = Game.playerTurn.asInstanceOf[ComputerPlayer].optimalMove()
         if(moveMade.length == 1) {
