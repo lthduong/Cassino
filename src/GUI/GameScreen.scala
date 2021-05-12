@@ -153,7 +153,7 @@ object GameScreen extends Panel {
           Game.advanceTurn()
           if(Game.playerTurn.hand.isEmpty) Game.advanceTurn()
         } else {
-          Dialog.showMessage(this, "Choose a card to drop.", "Action failed.")
+          Dialog.showMessage(this, "Choose a card to drop.", "Action failed")
         }
         this.repaint()
         this.revalidate()
@@ -175,7 +175,7 @@ object GameScreen extends Panel {
           } else {
             cardSelected = Vector[Card]()
             cardUsed = None
-            Dialog.showMessage(this, "The capture is invalid. Please try again.", "Action failed.")
+            Dialog.showMessage(this, "The capture is invalid. Please try again.", "Action failed")
           }
         } else {
           Dialog.showMessage(this, "Choose a card to perform capture", "Action failed")
