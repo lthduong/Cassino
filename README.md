@@ -1,2 +1,2 @@
 # Cassino
-# A simple card fishing game
+A simple card fishing game
